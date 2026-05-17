@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { serviceSchema, detectionSchema, runbookSchema, stackSchema } from '../src/content/config';
+import { serviceSchema, detectionSchema, runbookSchema, stackSchema } from '../src/content/schemas';
 
 const servicesDir = join(__dirname, '../src/content/services');
 const detectionsDir = join(__dirname, '../src/content/detections');
