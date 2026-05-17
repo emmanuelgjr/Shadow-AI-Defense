@@ -1,0 +1,36 @@
+{
+  "id": "DET-CS-FALCON-001",
+  "name": "CrowdStrike Falcon — AI client process activity",
+  "description": "CrowdStrike Falcon Custom IOA detection for execution and DNS resolution patterns of consumer AI clients on managed endpoints.",
+  "platform": "CrowdStrike Falcon",
+  "detection_type": "Endpoint",
+  "rule_language": "Falcon CQL",
+  "rule_query": "// Falcon CQL — AI client process activity\n// Custom IOA rule: alert on process execution of known AI desktop clients\n// OR DNS resolution to consumer LLM domains\n//\n// Rule group: Shadow_AI_Detection\n//\n// Trigger 1 — Process executions:\n//   FileName IN ('ChatGPT.exe', 'Claude.exe', 'Cursor.exe', 'Otter.exe', 'Copilot.exe')\n//   OR FileName MATCHES_REGEX '(?i)ChatGPT\\.app|Claude\\.app'\n//\n// Trigger 2 — DNS resolution to consumer AI domains:\n//   DomainName ENDS_WITH ('.openai.com', '.chatgpt.com', '.anthropic.com', '.claude.ai',\n//                          '.gemini.google.com', '.perplexity.ai', '.deepseek.com',\n//                          '.x.ai', '.copilot.microsoft.com')\n//\n// Severity: Informational (raises analyst-visible event for correlation;\n//           combine with DET-MS-PV-001 equivalent in your DLP tool to escalate)\n//\n// Actions: Generate detection. Do not auto-block (use Falcon Device Control + USB policy\n// for hardware controls; use NGAV exploit prevention for true malicious behavior)",
+  "rule_explanation": "Endpoint-side coverage for environments where Microsoft tooling isn't dominant. Falcon Custom IOAs are evaluated at the agent and surface in Falcon Insight events.",
+  "required_data_sources": ["CrowdStrike Falcon Insight (XDR) or Falcon Prevent with telemetry"],
+  "prerequisites": [
+    "CrowdStrike Falcon Insight licensed",
+    "Custom IOA rule group created (Admin > Custom IOAs)",
+    "Sensor at version that supports DNS_LOOKUP and PROCESS_EXEC IOA triggers"
+  ],
+  "expected_volume": "Variable by org. Use Informational severity by default.",
+  "false_positive_guidance": "Allow-list approved-pilot users via sensor grouping.",
+  "tuning_steps": [
+    "Refine domain list quarterly.",
+    "Add new AI desktop clients as released.",
+    "Correlate with Falcon Identity Protection events for OAuth grants where applicable."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity", "cursor", "otter-ai", "microsoft-copilot-consumer", "deepseek", "xai-grok"],
+  "severity": "Informational",
+  "recommended_response": "RB-001",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7"],
+    "iso_iec_42001": ["8.2"],
+    "nist_csf": ["DE.CM-7"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-01",
+  "last_reviewed": "2026-05-01",
+  "references": [{ "title": "CrowdStrike Falcon Custom IOAs", "url": "https://www.crowdstrike.com/falcon-platform/" }]
+}

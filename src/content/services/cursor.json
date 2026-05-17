@@ -1,0 +1,25 @@
+{
+  "slug": "cursor",
+  "name": "Cursor",
+  "vendor": "Anysphere",
+  "category": "Code Assistant",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Cursor Business",
+  "network_signatures": {
+    "domains": ["cursor.sh", "cursor.com"],
+    "api_endpoints": ["api.cursor.sh", "api2.cursor.sh"],
+    "sni_patterns": ["*.cursor.sh", "*.cursor.com"]
+  },
+  "client_signatures": {
+    "process_names": ["Cursor.app (macOS)", "Cursor.exe (Windows)"],
+    "desktop_apps": [{ "name": "Cursor", "macOS_bundle": "com.todesktop.230313mzl4w4u92" }]
+  },
+  "data_egress_concerns": ["Source code", "API keys in editor", "Internal repository content"],
+  "training_use_default": "Privacy mode (available across tiers) disables training-use and most retention. Business tier defaults to privacy mode.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 4, "ip_loss": 4, "output_quality": 3, "integration_risk": 3 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [{ "title": "Cursor Privacy and Security", "url": "https://cursor.com/security" }],
+  "last_reviewed": "2026-05-01"
+}

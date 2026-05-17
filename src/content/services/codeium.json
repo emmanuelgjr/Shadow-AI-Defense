@@ -1,0 +1,24 @@
+{
+  "slug": "codeium",
+  "name": "Codeium",
+  "vendor": "Exafunction",
+  "category": "Code Assistant",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Codeium Teams / Enterprise (self-hosted available)",
+  "network_signatures": {
+    "domains": ["codeium.com"],
+    "api_endpoints": ["server.codeium.com", "inference.codeium.com"],
+    "sni_patterns": ["*.codeium.com"]
+  },
+  "client_signatures": {
+    "process_names": ["language_server (VS Code Codeium)", "codeium-language-server"]
+  },
+  "data_egress_concerns": ["Source code", "Repository context", "API keys in code"],
+  "training_use_default": "Enterprise tier offers self-hosted deployment that keeps code on-premises. Hosted free tier may use telemetry for product improvement.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 3, "ip_loss": 4, "output_quality": 3, "integration_risk": 2 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [{ "title": "Codeium Security", "url": "https://codeium.com/security" }],
+  "last_reviewed": "2026-05-01"
+}

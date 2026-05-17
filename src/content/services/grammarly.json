@@ -1,0 +1,25 @@
+{
+  "slug": "grammarly",
+  "name": "Grammarly",
+  "vendor": "Grammarly",
+  "category": "Productivity",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Grammarly Business / Grammarly for Education",
+  "network_signatures": {
+    "domains": ["grammarly.com", "app.grammarly.com"],
+    "api_endpoints": ["capi.grammarly.com"],
+    "sni_patterns": ["*.grammarly.com"]
+  },
+  "client_signatures": {
+    "browser_extensions": [{ "name": "Grammarly", "id_chrome": "kbfnbcaeplbcioakkpcpgfkobkghlhen", "risk": "elevated" }],
+    "process_names": ["Grammarly Desktop.app (macOS)", "Grammarly.exe (Windows)"]
+  },
+  "data_egress_concerns": ["Every typed document", "Customer-facing email drafts", "Confidential reports"],
+  "training_use_default": "Business tier opt-out of training is standard. Consumer tier defaults differ — review.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 4, "ip_loss": 4, "output_quality": 2, "integration_risk": 3 },
+  "detection_rules": ["DET-MS-MDE-001", "DET-MS-MCAS-001"],
+  "recommended_response": "Conditional",
+  "references": [{ "title": "Grammarly Trust Center", "url": "https://www.grammarly.com/trust" }],
+  "last_reviewed": "2026-05-01"
+}

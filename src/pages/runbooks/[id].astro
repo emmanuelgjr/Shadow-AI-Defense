@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const runbooks = await getCollection('runbooks');
+  return runbooks.map((r) => ({ params: { id: r.data.id }, props: { runbook: r.data } }));
+}
+const { runbook } = Astro.props;
+const fm = runbook.framework_mappings;
+---
+
+<BaseLayout
+  title={`${runbook.title} (${runbook.id}) — Shadow AI Defense`}
+  description={runbook.trigger.slice(0, 160)}
+  ogType="article"
+>
+  <article class="max-w-content mx-auto px-6 lg:px-8 py-12">
+    <a href="/runbooks" class="text-sm text-ink-500 hover:text-accent-700">← All runbooks</a>
+
+    <header class="border-b border-ink-200 pb-8 mt-3 mb-8">
+      <div class="flex flex-wrap items-center gap-2 mb-2">
+        <span class="font-mono text-sm text-ink-500">{runbook.id}</span>
+        <span class={`badge ${runbook.severity === 'High' ? 'bg-risk-50 text-risk-700' : runbook.severity === 'Medium' ? 'bg-warn-50 text-warn-700' : 'bg-info-50 text-info-700'}`}>{runbook.severity}</span>
+      </div>
+      <h1 class="font-display font-semibold text-3xl md:text-4xl tracking-tight text-ink-900">{runbook.title}</h1>
+      <p class="mt-3 text-ink-700 max-w-prose-wide">{runbook.trigger}</p>
+    </header>
+
+    <div class="prose prose-lg max-w-prose-wide">
+      <h2>Triggers</h2>
+      <ul>
+        {runbook.applies_to.map((id) => (
+          <li><a href={`/detections/${id}`}>{id}</a></li>
+        ))}
+      </ul>
+
+      <h2>Immediate response (first hours)</h2>
+      <ol>
+        {runbook.response_phases.immediate.map((s) => (
+          <li><strong>{s.owner}:</strong> {s.action}{s.expected_completion ? ` (${s.expected_completion})` : ''}</li>
+        ))}
+      </ol>
+
+      <h2>Short-term response (within days)</h2>
+      <ol>
+        {runbook.response_phases.short_term.map((s) => (
+          <li><strong>{s.owner}:</strong> {s.action}{s.expected_completion ? ` (${s.expected_completion})` : ''}</li>
+        ))}
+      </ol>
+
+      <h2>Long-term response (weeks+)</h2>
+      <ol>
+        {runbook.response_phases.long_term.map((s) => (
+          <li><strong>{s.owner}:</strong> {s.action}{s.expected_completion ? ` (${s.expected_completion})` : ''}</li>
+        ))}
+      </ol>
+
+      {runbook.decision_tree.length > 0 && (
+        <>
+          <h2>Decision tree</h2>
+          <ul>
+            {runbook.decision_tree.map((n) => (
+              <li><strong>{n.node}</strong>
+                <ul>
+                  <li>Yes → {n.yes}</li>
+                  <li>No → {n.no}</li>
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      <h2>RACI</h2>
+      <ul>
+        <li><strong>Responsible:</strong> {runbook.raci.responsible}</li>
+        <li><strong>Accountable:</strong> {runbook.raci.accountable}</li>
+        <li><strong>Consulted:</strong> {runbook.raci.consulted.join(', ')}</li>
+        <li><strong>Informed:</strong> {runbook.raci.informed.join(', ')}</li>
+      </ul>
+
+      <h2>Metrics to capture</h2>
+      <ul>{runbook.metrics_to_capture.map((m) => <li>{m}</li>)}</ul>
+
+      <h2>Comms templates</h2>
+      <ul>{runbook.comms_templates.map((c) => <li><code>{c}</code></li>)}</ul>
+
+      <h2>Framework mappings</h2>
+      <ul>
+        {fm.nist_ai_rmf?.length && <li><strong>NIST AI RMF:</strong> {fm.nist_ai_rmf.join(', ')}</li>}
+        {fm.iso_iec_42001?.length && <li><strong>ISO/IEC 42001:</strong> {fm.iso_iec_42001.join(', ')}</li>}
+        {fm.nist_csf?.length && <li><strong>NIST CSF:</strong> {fm.nist_csf.join(', ')}</li>}
+      </ul>
+
+      {runbook.ai_controls_catalog_refs.length > 0 && (
+        <>
+          <h2>Related AI Controls Catalog entries</h2>
+          <ul>
+            {runbook.ai_controls_catalog_refs.map((id) => (
+              <li><a href={`https://aicontrolscatalog.dev/controls/${id}`}>{id}</a></li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  </article>
+</BaseLayout>

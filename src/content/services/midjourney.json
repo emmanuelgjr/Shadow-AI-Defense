@@ -1,0 +1,21 @@
+{
+  "slug": "midjourney",
+  "name": "Midjourney",
+  "vendor": "Midjourney",
+  "category": "Image Gen",
+  "enterprise_offering": false,
+  "network_signatures": {
+    "domains": ["midjourney.com"],
+    "api_endpoints": [],
+    "sni_patterns": ["*.midjourney.com"]
+  },
+  "client_signatures": {},
+  "data_egress_concerns": ["Prompt content (text)", "Reference images potentially containing PII or trademarked content"],
+  "training_use_default": "Generated images and prompts are typically used for service operation and possibly product improvement; review current terms.",
+  "enterprise_dpa_available": false,
+  "risk_profile": { "data_exfiltration": 2, "ip_loss": 3, "output_quality": 3, "integration_risk": 2 },
+  "detection_rules": ["DET-MS-SEN-001"],
+  "recommended_response": "Conditional",
+  "references": [{ "title": "Midjourney Terms", "url": "https://docs.midjourney.com/docs/terms-of-service" }],
+  "last_reviewed": "2026-05-01"
+}

@@ -1,0 +1,27 @@
+{
+  "slug": "crowdstrike-netskope",
+  "name": "CrowdStrike + Netskope (Microsoft optional)",
+  "short": "CS + Netskope",
+  "description": "CrowdStrike Falcon Insight on the endpoint, Netskope as SWG/CASB at the network layer. A common non-Microsoft-first stack in financial services and enterprise.",
+  "applicable_rule_platforms": ["CrowdStrike Falcon", "Netskope", "Generic Network", "Generic Network"],
+  "not_possible_rules": ["DET-MS-SEN-001", "DET-MS-SEN-002", "DET-MS-SEN-003", "DET-MS-SEN-004", "DET-MS-SEN-005", "DET-MS-MDE-001", "DET-MS-MDE-002", "DET-MS-PV-001", "DET-MS-MCAS-001", "DET-MS-MCAS-002", "DET-MS-MCAS-MANUAL-001"],
+  "compensating_controls": [
+    "Use CrowdStrike Falcon Insight (DET-CS-FALCON-001) for endpoint detection equivalent to Defender for Endpoint.",
+    "Use CrowdStrike Falcon Data Protection (DET-CS-FALCON-002) for DLP equivalent to Purview Endpoint DLP.",
+    "Use Netskope's native Generative AI app tagging for SWG enforcement and discovery; export to your SIEM for correlation.",
+    "Identity-side: pair with Okta / Azure AD / Entra Conditional Access (whichever your identity provider is) for unmanaged-device blocking."
+  ],
+  "things_to_know": [
+    { "title": "Falcon Data Protection has its own onboarding curve", "content": "Plan 2–4 weeks for sensor coverage and another 2–4 weeks of content-classifier training before enforcement.", "severity": "warn" },
+    { "title": "Netskope native AI app tagging", "content": "Netskope's app catalog tracks Generative AI apps natively. Use the built-in policy templates for fast initial coverage.", "severity": "info" },
+    { "title": "Correlate to a central SIEM", "content": "Without Sentinel, route Falcon and Netskope events to a central SIEM (Splunk, Chronicle, Elastic, Panther) for cross-source correlation against the runbook triggers.", "severity": "info" }
+  ],
+  "policy_token_replacements": {
+    "siem_tool": "your central SIEM (Splunk / Chronicle / Elastic / Panther)",
+    "dlp_tool": "CrowdStrike Falcon Data Protection (plus Netskope inline DLP)",
+    "edr_tool": "CrowdStrike Falcon Insight",
+    "casb_tool": "Netskope",
+    "swg_tool": "Netskope SWG"
+  },
+  "recommended_deployment_order": ["DET-NET-001", "DET-CS-FALCON-001", "DET-CS-FALCON-002", "DET-NET-002"]
+}

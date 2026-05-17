@@ -1,0 +1,22 @@
+{
+  "slug": "merlin-extension",
+  "name": "Merlin (browser extension)",
+  "vendor": "Foyer Inc.",
+  "category": "Browser Extension",
+  "enterprise_offering": false,
+  "network_signatures": {
+    "domains": ["merlin.foyer.work"],
+    "sni_patterns": ["*.merlin.foyer.work", "*.foyer.work"]
+  },
+  "client_signatures": {
+    "browser_extensions": [{ "name": "Merlin: AI Assistant", "id_chrome": "camppjleccjaphfdbohjdohecfnoikec", "risk": "elevated" }]
+  },
+  "data_egress_concerns": ["Selected page content sent to vendor LLM proxy", "Browser history when 'summarize tab' is invoked", "Form contents on visited pages"],
+  "training_use_default": "Free tier and consumer-paid tiers vary; no enterprise tier with contractual training-use exclusion.",
+  "enterprise_dpa_available": false,
+  "risk_profile": { "data_exfiltration": 5, "ip_loss": 4, "output_quality": 3, "integration_risk": 4 },
+  "detection_rules": ["DET-MS-MDE-001"],
+  "recommended_response": "Block",
+  "references": [],
+  "last_reviewed": "2026-05-01"
+}

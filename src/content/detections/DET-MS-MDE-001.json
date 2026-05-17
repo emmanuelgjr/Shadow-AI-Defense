@@ -1,0 +1,32 @@
+{
+  "id": "DET-MS-MDE-001",
+  "name": "Unauthorized AI browser extension installation",
+  "description": "Detects installation of browser extensions identified as Shadow AI risk vectors on managed endpoints.",
+  "platform": "Defender for Endpoint",
+  "detection_type": "Endpoint",
+  "rule_language": "KQL",
+  "rule_query": "// Detect installation of high-risk AI browser extensions\nlet riskyExtensions = _GetWatchlist('AIBrowserExtensions') | project SearchKey, Name=tostring(Notes);\nDeviceFileEvents\n| where Timestamp > ago(7d)\n| where ActionType in ('FileCreated', 'FileRenamed')\n| where FolderPath has_any ('\\\\Chrome\\\\Extensions\\\\', '/Library/Application Support/Google/Chrome/Default/Extensions/', '/Library/Application Support/Microsoft Edge/Default/Extensions/')\n| extend ExtensionId = extract(@'Extensions[\\\\/]([a-z]{32})', 1, FolderPath)\n| where isnotempty(ExtensionId)\n| where ExtensionId in (riskyExtensions)\n| summarize InstallCount = count(), FirstSeen = min(Timestamp), Devices = make_set(DeviceName, 50)\n          by InitiatingProcessAccountUpn, ExtensionId",
+  "rule_explanation": "Monitors filesystem activity in browser extension directories. Cross-references installed extension IDs against the AIBrowserExtensions watchlist populated from the Service Catalog.",
+  "required_data_sources": ["Defender for Endpoint (DeviceFileEvents)", "Sentinel watchlist: AIBrowserExtensions"],
+  "prerequisites": [
+    "Defender for Endpoint P2 or M365 E5",
+    "Watchlist populated from service-catalog browser extension entries",
+    "Note: Chrome Enterprise policy is the preferred preventive control; this is the detective fallback"
+  ],
+  "expected_volume": "Low — 5–20/day in a typical org of 10k seats before prevention.",
+  "false_positive_guidance": "Some extension IDs change across major versions. Re-validate watchlist monthly.",
+  "tuning_steps": ["Add Chrome Enterprise policy (BlockExternalExtensions) as preventive layer.", "Exclude IT testing devices."],
+  "detects_services": ["merlin-extension", "chatgpt-for-google-extension", "grammarly"],
+  "severity": "Medium",
+  "recommended_response": "RB-004",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7"],
+    "iso_iec_42001": ["8.2"],
+    "nist_csf": ["DE.CM-7", "PR.IP-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-01",
+  "last_reviewed": "2026-05-01",
+  "references": []
+}

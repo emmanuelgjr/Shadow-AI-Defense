@@ -1,0 +1,27 @@
+{
+  "slug": "google-gemini",
+  "name": "Gemini",
+  "vendor": "Google",
+  "category": "Conversational AI",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Gemini for Workspace / Vertex AI",
+  "network_signatures": {
+    "domains": ["gemini.google.com", "bard.google.com", "aistudio.google.com"],
+    "api_endpoints": ["generativelanguage.googleapis.com", "us-central1-aiplatform.googleapis.com"],
+    "sni_patterns": ["*.googleapis.com", "*.gemini.google.com"]
+  },
+  "client_signatures": {
+    "mobile_apps": [{ "name": "Gemini Android", "package_id": "com.google.android.apps.bard" }]
+  },
+  "data_egress_concerns": ["Workspace document content", "Customer data", "Code", "Email contents"],
+  "training_use_default": "Consumer Gemini: conversations may be reviewed and used to improve services unless turned off. Workspace tier: customer data not used to train generally-available models per contractual terms.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 4, "ip_loss": 4, "output_quality": 3, "integration_risk": 4 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-MS-PV-001", "DET-NET-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [
+    { "title": "Gemini Apps Privacy Hub", "url": "https://support.google.com/gemini" },
+    { "title": "Google Workspace data protection", "url": "https://workspace.google.com/security/" }
+  ],
+  "last_reviewed": "2026-05-01"
+}

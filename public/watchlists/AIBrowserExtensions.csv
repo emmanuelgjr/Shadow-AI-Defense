@@ -1,0 +1,4 @@
+SearchKey,Name,Vendor,Risk,LastReviewed,Notes
+jgjaeacdkonaoafenlfkkkmbaopkbilf,ChatGPT for Google,wong2,elevated,2026-05-01,Routes search queries through ChatGPT consumer
+camppjleccjaphfdbohjdohecfnoikec,Merlin,Foyer Inc.,elevated,2026-05-01,Sends page content to vendor LLM proxy
+kbfnbcaeplbcioakkpcpgfkobkghlhen,Grammarly,Grammarly,elevated,2026-05-01,Reads all typed content

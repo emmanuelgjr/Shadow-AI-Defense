@@ -1,0 +1,29 @@
+{
+  "slug": "microsoft-copilot-consumer",
+  "name": "Copilot (consumer)",
+  "vendor": "Microsoft",
+  "category": "Conversational AI",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Microsoft 365 Copilot / Copilot for Microsoft 365 with Enterprise Data Protection",
+  "network_signatures": {
+    "domains": ["copilot.microsoft.com", "www.bing.com/chat", "bing.com"],
+    "sni_patterns": ["*.copilot.microsoft.com", "*.bing.com"]
+  },
+  "client_signatures": {
+    "process_names": ["Copilot.exe (Windows)"],
+    "mobile_apps": [
+      { "name": "Microsoft Copilot iOS", "bundle_id": "com.microsoft.copilot" },
+      { "name": "Microsoft Copilot Android", "package_id": "com.microsoft.copilot" }
+    ]
+  },
+  "data_egress_concerns": ["User-entered prompts containing internal data", "Document context shared with Copilot consumer"],
+  "training_use_default": "Consumer Copilot uses Bing infrastructure; conversation use for service improvement is governed by Microsoft's consumer privacy terms. Enterprise Data Protection mode (M365 E3/E5 with Copilot) excludes training use contractually.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 4, "ip_loss": 4, "output_quality": 3, "integration_risk": 3 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-MS-MCAS-001", "DET-NET-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [
+    { "title": "Microsoft 365 Copilot Privacy", "url": "https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-privacy" }
+  ],
+  "last_reviewed": "2026-05-01"
+}

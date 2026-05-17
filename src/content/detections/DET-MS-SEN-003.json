@@ -1,0 +1,31 @@
+{
+  "id": "DET-MS-SEN-003",
+  "name": "Mass adoption of unsanctioned AI tool",
+  "description": "Detects when an unsanctioned AI service exceeds a user-count threshold within a short window, indicating organic adoption that warrants program-level response.",
+  "platform": "Microsoft Sentinel",
+  "detection_type": "Network",
+  "rule_language": "KQL",
+  "rule_query": "// Mass-adoption pattern: an unsanctioned LLM domain exceeds 50 users in 7 days\nlet llmDomains = _GetWatchlist('ConsumerLLMDomains') | project SearchKey;\nlet sanctioned = _GetWatchlist('SanctionedAIServices') | project SearchKey;\nDeviceNetworkEvents\n| where Timestamp > ago(7d)\n| where ActionType == 'ConnectionSuccess'\n| extend Domain = tostring(parse_url(RemoteUrl).Host)\n| where Domain in (llmDomains)\n| where Domain !in (sanctioned)\n| summarize Users = dcount(InitiatingProcessAccountUpn),\n            Connections = count(),\n            Span = max(Timestamp) - min(Timestamp)\n          by Domain\n| where Users >= 50\n| order by Users desc",
+  "rule_explanation": "Identifies viral-adoption events that exceed individual-response capacity. Triggers RB-003 (program-level response) rather than per-user warnings.",
+  "required_data_sources": [
+    "Microsoft Defender for Endpoint (DeviceNetworkEvents)",
+    "Sentinel watchlists: ConsumerLLMDomains, SanctionedAIServices"
+  ],
+  "prerequisites": ["Watchlists deployed and current"],
+  "expected_volume": "Rare — 0–3 events per month. Each is a program-level decision.",
+  "false_positive_guidance": "Verify the domain is actually an LLM service (cross-check the service catalog).",
+  "tuning_steps": ["Adjust 50-user threshold to your organization's scale.", "Adjust 7-day window to taste."],
+  "detects_services": [],
+  "severity": "High",
+  "recommended_response": "RB-003",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-2.2"],
+    "iso_iec_42001": ["8.2", "8.4"],
+    "nist_csf": ["DE.AE-2"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020", "AI-CTRL-016"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-01",
+  "last_reviewed": "2026-05-01",
+  "references": []
+}

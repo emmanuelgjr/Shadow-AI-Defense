@@ -1,0 +1,29 @@
+{
+  "slug": "perplexity",
+  "name": "Perplexity",
+  "vendor": "Perplexity AI",
+  "category": "Search",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Perplexity Enterprise",
+  "network_signatures": {
+    "domains": ["perplexity.ai", "www.perplexity.ai"],
+    "api_endpoints": ["api.perplexity.ai"],
+    "sni_patterns": ["*.perplexity.ai"]
+  },
+  "client_signatures": {
+    "mobile_apps": [
+      { "name": "Perplexity iOS", "bundle_id": "ai.perplexity.app" },
+      { "name": "Perplexity Android", "package_id": "ai.perplexity.app.android" }
+    ]
+  },
+  "data_egress_concerns": ["Query content containing internal terms", "Internal product names", "Customer-specific context"],
+  "training_use_default": "Consumer tiers permit use for model improvement by default. Enterprise tier excludes training use contractually.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 3, "ip_loss": 4, "output_quality": 3, "integration_risk": 2 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [
+    { "title": "Perplexity Privacy Policy", "url": "https://www.perplexity.ai/hub/legal/privacy-policy" }
+  ],
+  "last_reviewed": "2026-05-01"
+}

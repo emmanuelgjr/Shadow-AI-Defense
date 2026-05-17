@@ -1,0 +1,36 @@
+{
+  "id": "DET-MS-SEN-001",
+  "name": "Outbound traffic to consumer LLM domains",
+  "description": "Detects connections from corporate endpoints to known consumer LLM service domains, indicating Shadow AI use.",
+  "platform": "Microsoft Sentinel",
+  "detection_type": "Network",
+  "rule_language": "KQL",
+  "rule_query": "// Detect connections to consumer LLM services\n// Tune the watchlist 'ConsumerLLMDomains' to your policy\nlet llmDomains = _GetWatchlist('ConsumerLLMDomains') | project SearchKey;\nDeviceNetworkEvents\n| where Timestamp > ago(24h)\n| where ActionType == 'ConnectionSuccess'\n| where RemoteUrl has_any (llmDomains) or RemoteIPType == 'Public'\n| extend Domain = tostring(parse_url(RemoteUrl).Host)\n| where Domain in (llmDomains)\n| summarize ConnectionCount = count(),\n            UniqueUsers = dcount(InitiatingProcessAccountUpn),\n            FirstSeen = min(Timestamp),\n            LastSeen = max(Timestamp),\n            Endpoints = make_set(DeviceName, 100)\n          by Domain, InitiatingProcessAccountUpn\n| where ConnectionCount > 5\n| project-reorder InitiatingProcessAccountUpn, Domain, ConnectionCount, FirstSeen, LastSeen, Endpoints",
+  "rule_explanation": "Uses a Sentinel watchlist of consumer LLM domains (chat.openai.com, claude.ai, gemini.google.com, perplexity.ai, etc.) and identifies users whose endpoints have connected more than 5 times in 24 hours. Designed to detect repeated use rather than incidental visits. Pair with the watchlist 'ConsumerLLMDomains' (template provided in this repo).",
+  "required_data_sources": ["Microsoft Defender for Endpoint (DeviceNetworkEvents)", "Sentinel watchlist: ConsumerLLMDomains"],
+  "prerequisites": [
+    "Microsoft 365 E5 or Defender for Endpoint P2",
+    "Sentinel workspace with M365D connector",
+    "Watchlist created from /watchlists/ConsumerLLMDomains.csv in this repo"
+  ],
+  "expected_volume": "Moderate — for an org of 10k knowledge workers, expect 50–200 user matches per day before tuning. Drops to 10–30/day after policy + comms.",
+  "false_positive_guidance": "Some users may legitimately use approved tools through consumer URLs (e.g., a help-desk troubleshooting). Maintain an allow list of known approved use cases.",
+  "tuning_steps": [
+    "Adjust ConnectionCount threshold from 5 based on baseline.",
+    "Add allow-list for users in approved AI pilot groups.",
+    "Exclude IT and Security testing accounts."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity"],
+  "severity": "Medium",
+  "recommended_response": "RB-001",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7"],
+    "iso_iec_42001": ["8.2", "8.3"],
+    "mitre_attack": ["T1567"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-01",
+  "last_reviewed": "2026-05-01",
+  "references": []
+}

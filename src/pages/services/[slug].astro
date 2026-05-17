@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const services = await getCollection('services');
+  return services.map((s) => ({ params: { slug: s.data.slug }, props: { service: s.data } }));
+}
+const { service } = Astro.props;
+---
+
+<BaseLayout
+  title={`${service.name} — Shadow AI service profile — Shadow AI Defense`}
+  description={`${service.name} from ${service.vendor}. ${service.data_egress_concerns[0]}`}
+  ogType="article"
+>
+  <article class="max-w-3xl mx-auto px-6 lg:px-8 py-12">
+    <a href="/services" class="text-sm text-ink-500 hover:text-accent-700">← All services</a>
+    <header class="border-b border-ink-200 pb-8 mt-3 mb-8">
+      <p class="text-xs text-ink-500 uppercase tracking-wide">{service.vendor} · {service.category}</p>
+      <h1 class="font-display font-semibold text-3xl tracking-tight text-ink-900 mt-2">{service.name}</h1>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <span class="badge-accent">{service.recommended_response}</span>
+        <span class="badge-neutral">Enterprise tier: {service.enterprise_offering ? 'Available' : 'Not available'}</span>
+        <span class="badge-neutral">DPA: {service.enterprise_dpa_available ? 'Yes' : 'No'}</span>
+      </div>
+    </header>
+
+    <div class="prose prose-lg max-w-prose-wide">
+      <h2>Network signatures</h2>
+      <p><strong>Domains:</strong> {service.network_signatures.domains.join(', ')}</p>
+      {service.network_signatures.api_endpoints?.length && (
+        <p><strong>API endpoints:</strong> {service.network_signatures.api_endpoints.join(', ')}</p>
+      )}
+      {service.network_signatures.sni_patterns?.length && (
+        <p><strong>SNI patterns:</strong> {service.network_signatures.sni_patterns.join(', ')}</p>
+      )}
+
+      <h2>Client signatures</h2>
+      {service.client_signatures.process_names?.length && (
+        <p><strong>Process names:</strong> {service.client_signatures.process_names.join(', ')}</p>
+      )}
+      {service.client_signatures.browser_extensions?.length && (
+        <p><strong>Browser extensions:</strong> {service.client_signatures.browser_extensions.map((e) => `${e.name} (risk: ${e.risk})`).join('; ')}</p>
+      )}
+      {service.client_signatures.mobile_apps?.length && (
+        <p><strong>Mobile apps:</strong> {service.client_signatures.mobile_apps.map((m) => m.name).join('; ')}</p>
+      )}
+
+      <h2>Risk profile (1–5)</h2>
+      <ul>
+        <li>Data exfiltration: <strong>{service.risk_profile.data_exfiltration}</strong></li>
+        <li>IP loss: <strong>{service.risk_profile.ip_loss}</strong></li>
+        <li>Output quality (hallucination / legal): <strong>{service.risk_profile.output_quality}</strong></li>
+        <li>Integration risk (OAuth, extensions, agentic): <strong>{service.risk_profile.integration_risk}</strong></li>
+      </ul>
+
+      <h2>Data egress concerns</h2>
+      <ul>{service.data_egress_concerns.map((c) => <li>{c}</li>)}</ul>
+
+      <h2>Training-use default</h2>
+      <p>{service.training_use_default}</p>
+
+      {service.detection_rules.length > 0 && (
+        <>
+          <h2>Applicable detection rules</h2>
+          <ul>
+            {service.detection_rules.map((id) => (
+              <li><a href={`/detections/${id}`}>{id}</a></li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {service.references.length > 0 && (
+        <>
+          <h2>References</h2>
+          <ul>
+            {service.references.map((r) => (
+              <li><a href={r.url} target="_blank" rel="noopener noreferrer">{r.title}</a></li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  </article>
+</BaseLayout>

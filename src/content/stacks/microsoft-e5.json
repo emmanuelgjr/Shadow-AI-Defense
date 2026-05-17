@@ -1,0 +1,26 @@
+{
+  "slug": "microsoft-e5",
+  "name": "Microsoft E5 (full)",
+  "short": "M365 E5",
+  "description": "Microsoft 365 E5 with Defender for Endpoint P2, Purview Information Protection & Governance, Defender for Cloud Apps, Sentinel, and Conditional Access. The richest in-band coverage.",
+  "applicable_rule_platforms": ["Microsoft Sentinel", "Defender for Cloud Apps", "Purview DLP", "Defender for Endpoint", "Conditional Access", "Generic Network"],
+  "not_possible_rules": ["DET-CS-FALCON-001", "DET-CS-FALCON-002"],
+  "compensating_controls": [
+    "Generic SWG/proxy block (DET-NET-001) is optional but recommended as a defense-in-depth layer at the network edge",
+    "Generic firewall API-endpoint block (DET-NET-002) is recommended for additional segmentation"
+  ],
+  "things_to_know": [
+    { "title": "Endpoint DLP requires onboarding time", "content": "Devices must be onboarded to Purview Endpoint DLP (typically via co-onboarding with Defender for Endpoint). Plan 2–4 weeks to full coverage in a typical org.", "severity": "info" },
+    { "title": "Custom Sensitive Info Types need training data", "content": "Custom SITs typically need ~30 days of training data before false-positive rates are tolerable. Plan the rollout sequence accordingly.", "severity": "warn" },
+    { "title": "Audit before Block", "content": "Always run DLP in Audit mode for at least 2 weeks before enforcement. Tune based on real traffic before flipping the switch.", "severity": "warn" },
+    { "title": "Approved-tool launch must precede enforcement", "content": "Users must know where they CAN take AI work before they're blocked from where they can't. Sequence: approved-tool launch comms → audit-mode detection → block-with-override → block.", "severity": "info" }
+  ],
+  "policy_token_replacements": {
+    "siem_tool": "Microsoft Sentinel",
+    "dlp_tool": "Microsoft Purview Endpoint DLP",
+    "edr_tool": "Microsoft Defender for Endpoint",
+    "casb_tool": "Microsoft Defender for Cloud Apps",
+    "swg_tool": "Defender for Cloud Apps Web Filtering (or your separate SWG)"
+  },
+  "recommended_deployment_order": ["DET-MS-CA-001", "DET-MS-MCAS-001", "DET-MS-SEN-001", "DET-MS-MDE-001", "DET-MS-PV-001", "DET-MS-SEN-002", "DET-MS-SEN-003", "DET-MS-SEN-004", "DET-MS-MCAS-002", "DET-MS-MDE-002", "DET-MS-SEN-005"]
+}

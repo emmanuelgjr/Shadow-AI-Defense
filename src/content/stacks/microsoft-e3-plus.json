@@ -1,0 +1,24 @@
+{
+  "slug": "microsoft-e3-plus",
+  "name": "Microsoft E3 + Defender for Endpoint P2 + Purview add-ons",
+  "short": "M365 E3+ add-ons",
+  "description": "Microsoft 365 E3 with selective add-ons (Defender for Endpoint P2, Purview Information Protection & Governance). Most of the E5 detection power, without Sentinel.",
+  "applicable_rule_platforms": ["Defender for Cloud Apps", "Purview DLP", "Defender for Endpoint", "Conditional Access", "Generic Network"],
+  "not_possible_rules": [],
+  "compensating_controls": [
+    "Without Sentinel, alert correlation must happen in Defender XDR (advanced hunting queries are similar in syntax).",
+    "Manual snapshot reports to Defender for Cloud Apps (DET-MS-MCAS-MANUAL-001) replace continuous discovery for orgs without that license."
+  ],
+  "things_to_know": [
+    { "title": "Defender XDR hunting replaces Sentinel KQL", "content": "Most rules in this library work as Defender XDR Advanced Hunting queries with minor table-name adjustments. Defender XDR retains 30 days vs. Sentinel's longer retention.", "severity": "info" },
+    { "title": "Watchlist alternatives", "content": "Without Sentinel watchlists, maintain consumer LLM domain lists as KQL `dynamic([...])` literals in the rule, or push via Conditional Access Named Locations / MCAS app tags.", "severity": "warn" }
+  ],
+  "policy_token_replacements": {
+    "siem_tool": "Microsoft Defender XDR Advanced Hunting (with your central log archive)",
+    "dlp_tool": "Microsoft Purview Endpoint DLP",
+    "edr_tool": "Microsoft Defender for Endpoint",
+    "casb_tool": "Microsoft Defender for Cloud Apps",
+    "swg_tool": "Your secure web gateway"
+  },
+  "recommended_deployment_order": ["DET-MS-CA-001", "DET-MS-MCAS-001", "DET-MS-MDE-001", "DET-MS-PV-001", "DET-MS-MDE-002", "DET-MS-MCAS-002", "DET-NET-001"]
+}

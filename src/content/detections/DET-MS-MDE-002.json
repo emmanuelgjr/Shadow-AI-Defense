@@ -1,0 +1,28 @@
+{
+  "id": "DET-MS-MDE-002",
+  "name": "Local AI tool process execution",
+  "description": "Detects execution of locally-installed AI clients (desktop apps for consumer LLMs) on managed endpoints.",
+  "platform": "Defender for Endpoint",
+  "detection_type": "Endpoint",
+  "rule_language": "KQL",
+  "rule_query": "// Locally installed AI clients executing on endpoints\nlet aiProcesses = dynamic(['ChatGPT.exe', 'Claude.exe', 'Copilot.exe', 'Cursor.exe', 'Otter.exe', 'Grammarly.exe', 'ChatGPT.app', 'Claude.app']);\nDeviceProcessEvents\n| where Timestamp > ago(24h)\n| where FileName in (aiProcesses)\n| summarize InvocationCount = count(), FirstSeen = min(Timestamp), LastSeen = max(Timestamp)\n          by FileName, AccountUpn = InitiatingProcessAccountUpn, DeviceName",
+  "rule_explanation": "Surfaces installation and use of consumer AI desktop apps. Use as a triage trigger; combine with DET-MS-PV-001 results to assess actual data egress risk.",
+  "required_data_sources": ["Defender for Endpoint (DeviceProcessEvents)"],
+  "prerequisites": ["Defender for Endpoint P2 or M365 E5"],
+  "expected_volume": "Variable. Heavier in engineering-heavy orgs.",
+  "false_positive_guidance": "Allow-list users in approved enterprise pilots.",
+  "tuning_steps": ["Maintain aiProcesses list as new desktop clients ship.", "Add Intune app-deployment policy alongside detection."],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "microsoft-copilot-consumer", "cursor", "otter-ai", "grammarly"],
+  "severity": "Low",
+  "recommended_response": "RB-001",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7"],
+    "iso_iec_42001": ["8.2"],
+    "nist_csf": ["DE.CM-7"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-01",
+  "last_reviewed": "2026-05-01",
+  "references": []
+}

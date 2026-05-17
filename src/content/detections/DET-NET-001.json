@@ -1,0 +1,35 @@
+{
+  "id": "DET-NET-001",
+  "name": "Generic SWG / proxy — block consumer AI domains",
+  "description": "Stack-agnostic secure web gateway / proxy configuration to block consumer AI domains for unauthorized users.",
+  "platform": "Generic Network",
+  "detection_type": "Network",
+  "rule_language": "config",
+  "rule_query": "# Stack-agnostic SWG / Proxy / Firewall policy\n#\n# Block category: AI / Generative AI (where the SWG vendor provides this category)\n# Custom URL list source: /watchlists/ConsumerLLMDomains.csv from this repo\n#\n# Action:\n#   - Block with custom block page\n#   - Block page references the AUP and links to /approved-tools (internal portal)\n#   - Allow-list users in approved AI pilot groups (sync from Entra ID / Okta group)\n#\n# Logging:\n#   - All allowed and blocked AI-category traffic logged with user, source, destination, timestamp\n#   - Logs forwarded to central SIEM for correlation with DET-MS-SEN-001 / equivalents\n#\n# Supported vendors with native 'Generative AI' category (verify currency):\n#   - Zscaler (URL Category: Generative AI)\n#   - Netskope (App Tag: Generative AI)\n#   - Palo Alto Prisma Access (URL Filtering Category: ai-and-ml-applications)\n#   - Cisco Umbrella (Generative AI category)\n#   - Forcepoint Web Security (AI tools category)\n#   - Fortinet FortiGate (AI Chatbot URL Filter category)",
+  "rule_explanation": "Network-layer control for any organization with an SWG/proxy. Most modern SWGs ship a Generative AI URL category — use it directly. For organizations without that category, populate a custom URL list from the watchlist file.",
+  "required_data_sources": ["Any modern SWG / proxy / next-gen firewall with URL filtering"],
+  "prerequisites": [
+    "SWG / proxy / firewall enforcing for managed endpoints",
+    "Identity integration so policy can apply per group (or by source IP / VLAN as fallback)"
+  ],
+  "expected_volume": "Each blocked attempt generates one log; expect a sharp peak day 1 dropping to a stable baseline after AUP + approved-tools comms.",
+  "false_positive_guidance": "Confirm category curation freshness with the vendor; over-block on legitimate non-AI sites occasionally seen with new categorizations.",
+  "tuning_steps": [
+    "Sync allow-list weekly from Entra ID / Okta sanctioned AI users group.",
+    "Refresh custom URL list monthly from the published watchlist.",
+    "Review block-page click-throughs to /approved-tools as a comms-effectiveness metric."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity", "microsoft-copilot-consumer", "mistral-le-chat", "xai-grok", "deepseek", "qwen", "midjourney"],
+  "severity": "Medium",
+  "recommended_response": "RB-001",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1"],
+    "iso_iec_42001": ["8.2"],
+    "nist_csf": ["PR.AC-3", "DE.CM-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-01",
+  "last_reviewed": "2026-05-01",
+  "references": []
+}

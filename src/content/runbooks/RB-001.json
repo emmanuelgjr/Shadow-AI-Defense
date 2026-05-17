@@ -1,0 +1,55 @@
+{
+  "id": "RB-001",
+  "title": "Repeated consumer LLM use by individual employee",
+  "trigger": "Sentinel rule DET-MS-SEN-001 (or platform equivalent) fires for an individual user with > 5 connections to consumer LLM domains in 24 hours, OR DLP records repeated paste-to-AI events over a 7-day window.",
+  "severity": "Medium",
+  "applies_to": ["DET-MS-SEN-001", "DET-MS-MCAS-002", "DET-NET-001", "DET-MS-MDE-002", "DET-CS-FALCON-001"],
+  "response_phases": {
+    "immediate": [
+      { "step": 1, "owner": "L1 SOC analyst", "action": "Triage alert in SIEM. Confirm the user identity, device, and pattern. Rule out service accounts, security testing, and explicit approved-pilot membership." },
+      { "step": 2, "owner": "L1 SOC analyst", "action": "Check the AI Approved-Pilot register (link maintained in AI-Governance-Toolkit). If user is in an approved pilot for the detected service, close as benign with note." },
+      { "step": 3, "owner": "L1 SOC analyst", "action": "If NOT in approved pilot: enrich the alert with recent DLP events for the user (last 30 days), recent file uploads to consumer services, and manager from HR system. Escalate to L2." },
+      { "step": 4, "owner": "L2 SOC analyst", "action": "Determine if any DLP event indicates sensitive-data egress (regulated, IP, customer). If yes: ESCALATE to RB-002. If no: proceed to short-term." }
+    ],
+    "short_term": [
+      { "step": 5, "owner": "L2 SOC analyst + AI Governance triage", "action": "Use the comms template comms/individual-warning-first-occurrence. Send to user via email, CC their direct manager. Use approved-tool launch communication (comms/approved-tool-announcement) so user has a constructive path forward.", "expected_completion": "Within 5 business days of alert" },
+      { "step": 6, "owner": "AI Governance triage", "action": "Log the case in the AI Governance Risk Register (or local issue tracker) with: user pseudonym (do not store name in register), service detected, business context, recommendation issued.", "expected_completion": "Within 5 business days" },
+      { "step": 7, "owner": "Direct manager", "action": "1:1 conversation with employee. Confirm awareness of AUP. Identify whether legitimate business need exists; if so, route to AI Use-Case Intake (link to AI-Governance-Toolkit /inventory)." }
+    ],
+    "long_term": [
+      { "step": 8, "owner": "AI Governance triage", "action": "Add user to 30-day enhanced monitoring list (lower threshold on DET-MS-SEN-001 to flag any further consumer LLM use)." },
+      { "step": 9, "owner": "AI Governance triage", "action": "If repeat occurrence within 90 days: ESCALATE to escalation comms template (comms/individual-warning-repeat-occurrence) with manager + HR partner involved." },
+      { "step": 10, "owner": "AI Governance triage (quarterly)", "action": "Aggregate cohort metrics (total cases, repeat rate, conversion-to-approved-pilot rate). Report to AI Governance Committee and adjust program based on patterns observed." }
+    ]
+  },
+  "decision_tree": [
+    { "node": "Is user in approved AI pilot for this service?", "yes": "Close as benign with note.", "no": "Proceed to sensitive-data check." },
+    { "node": "Did DLP record sensitive-data egress in the window?", "yes": "Escalate to RB-002.", "no": "Issue first-occurrence warning + approved-tool comms." },
+    { "node": "Repeat occurrence within 90 days?", "yes": "Escalate to repeat-occurrence comms with HR partner.", "no": "30-day enhanced monitoring; close after 30 days clean." }
+  ],
+  "comms_templates": ["comms-individual-warning-first", "comms-approved-tool-announcement", "comms-individual-warning-repeat", "comms-manager-talking-points"],
+  "policy_references": ["AUP § 3 — Use of external AI services", "AUP § 4 — Sanctioned tools list"],
+  "raci": {
+    "responsible": "L1/L2 SOC analyst",
+    "accountable": "AI Governance triage lead",
+    "consulted": ["Direct manager", "HR Business Partner (for repeat)", "Legal (only if disciplinary)"],
+    "informed": ["AI Governance Committee (quarterly aggregate)"]
+  },
+  "metrics_to_capture": [
+    "Time from detection to first response (target: ≤ 24 hours)",
+    "Time from first response to user notification (target: ≤ 5 business days)",
+    "Repeat occurrence rate (target: < 10% within 90 days)",
+    "Conversion to approved-pilot enrollment rate (target: > 30%)",
+    "Hours of SOC analyst effort per case"
+  ],
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-2.2", "MANAGE-4.1"],
+    "iso_iec_42001": ["8.2", "8.4", "10.2"],
+    "nist_csf": ["RS.AN-1", "RS.MI-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020"],
+  "references": [
+    { "title": "NIST AI RMF — GOVERN-4 Accountability Structures", "url": "https://www.nist.gov/itl/ai-risk-management-framework" },
+    { "title": "ISO/IEC 42001:2023, clause 8.2", "url": "https://www.iso.org/standard/81230.html" }
+  ]
+}

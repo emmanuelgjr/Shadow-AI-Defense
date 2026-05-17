@@ -1,0 +1,51 @@
+{
+  "id": "RB-002",
+  "title": "Sensitive data egress to AI service confirmed (DLP positive)",
+  "trigger": "Purview DLP (DET-MS-PV-001) or Falcon Data Protection (DET-CS-FALCON-002) detects confirmed sensitive content egress to a consumer AI service, with an override or attempted bypass.",
+  "severity": "High",
+  "applies_to": ["DET-MS-PV-001", "DET-CS-FALCON-002", "DET-MS-SEN-005"],
+  "response_phases": {
+    "immediate": [
+      { "step": 1, "owner": "L1 SOC analyst", "action": "Treat as candidate data-loss incident. Preserve DLP event with full metadata and content fingerprint (do not retain raw sensitive content)." },
+      { "step": 2, "owner": "L2 SOC analyst", "action": "Identify what data class was egressed (PII / PHI / PCI / IP / regulated). If regulated or customer data: ESCALATE to AI-CTRL-009 Incident Response runbook within 1 hour." },
+      { "step": 3, "owner": "L2 SOC analyst + Privacy/Legal", "action": "If user override was applied, capture the override justification. Validate the justification is consistent with policy.", "expected_completion": "Within 4 hours" }
+    ],
+    "short_term": [
+      { "step": 4, "owner": "AI Governance triage + Privacy", "action": "Assess regulatory notification triggers (GDPR Article 33, sectoral). Privacy/Legal own the determination.", "expected_completion": "Within 24 hours for regulated data" },
+      { "step": 5, "owner": "AI Governance triage", "action": "Initiate contact with vendor (where contractual) to request deletion of the egressed content. Track deletion certificate.", "expected_completion": "Within 5 business days" },
+      { "step": 6, "owner": "Direct manager + HR", "action": "Conduct formal conversation with the user. Document outcomes per HR process. Determine if user requires additional training, restriction, or further action.", "expected_completion": "Within 10 business days" }
+    ],
+    "long_term": [
+      { "step": 7, "owner": "AI Governance triage", "action": "Add user to enhanced monitoring (60 days). Add data class to review list for additional Sensitive Info Type tuning." },
+      { "step": 8, "owner": "AI Governance Committee", "action": "If pattern across multiple users: program-level review of approved-tool gaps, comms effectiveness, and policy clarity." }
+    ]
+  },
+  "decision_tree": [
+    { "node": "Is the egressed data regulated (PHI / PCI / PII subject to GDPR-like rights)?", "yes": "Escalate to AI-CTRL-009 IR. Privacy/Legal lead notification determination.", "no": "Manage internally per this runbook." },
+    { "node": "Was the user override appropriate per policy?", "yes": "Close after manager conversation and AUP attestation.", "no": "HR involvement; consider disciplinary path." }
+  ],
+  "comms_templates": ["comms-incident-notification-sensitive-data-egress", "comms-manager-talking-points-sensitive-data", "comms-regulator-notification-template"],
+  "policy_references": ["AUP § 5 — Prohibited data categories", "Incident Response Plan § 4 — Data loss"],
+  "raci": {
+    "responsible": "L2 SOC analyst",
+    "accountable": "CISO (or designated incident commander)",
+    "consulted": ["Privacy lead", "Legal", "Vendor manager", "Direct manager", "HR Business Partner"],
+    "informed": ["AI Governance Committee", "Audit committee (per incident severity threshold)"]
+  },
+  "metrics_to_capture": [
+    "Time from DLP detection to triage (target: ≤ 1 hour for High)",
+    "Time from confirmation to regulator notification (target: per applicable law)",
+    "Vendor deletion certificate obtained (Yes/No, time-to-receipt)",
+    "Recurrence rate by user / by data class / by business unit"
+  ],
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-2.2", "MANAGE-4.3"],
+    "iso_iec_42001": ["8.3", "8.5", "10.1"],
+    "nist_csf": ["RS.RP-1", "RS.AN-1", "RS.MI-1", "RC.CO-2"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020", "AI-CTRL-013", "AI-CTRL-009"],
+  "references": [
+    { "title": "GDPR Article 33 — Notification of personal data breach", "url": "https://gdpr-info.eu/art-33-gdpr/" },
+    { "title": "NIST CSF — Respond function", "url": "https://www.nist.gov/cyberframework" }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "DET-MS-MCAS-MANUAL-001",
+  "name": "Defender for Cloud Apps — manual log upload from firewall (E3-friendly)",
+  "description": "For Microsoft minimal stacks, periodic manual log upload to Defender for Cloud Apps Shadow IT Discovery to catalog AI services seen on the network.",
+  "platform": "Defender for Cloud Apps",
+  "detection_type": "Application Connector",
+  "rule_language": "config",
+  "rule_query": "# Defender for Cloud Apps — Manual log upload (Snapshot Report)\n#\n# Steps:\n# 1. Export firewall / proxy logs for a representative period (typically 7 days)\n# 2. Defender for Cloud Apps > Cloud Discovery > Create snapshot report\n# 3. Choose log type (Cisco ASA / Palo Alto / Fortinet / Generic CEF / etc.)\n# 4. Upload log file\n# 5. Discovered apps appear after parsing (typically 15–30 min for 1 GB log file)\n# 6. Filter by Category = 'Generative AI'\n# 7. Triage apps: Sanction approved / Tag 'Block' for unsanctioned / Tag 'Monitor' for review\n#\n# Cadence: monthly snapshot reports for orgs that cannot afford continuous discovery\n# Limitations:\n#   - Point-in-time only\n#   - Manual workflow does not generate continuous alerts\n#   - Sanction status does not enforce without Conditional Access App Control",
+  "rule_explanation": "Discovery-only workflow for organizations without continuous-discovery licensing. Cheap to operate at 1-hour-per-month cadence; produces the foundational catalog of AI services in use.",
+  "required_data_sources": ["Firewall or proxy logs from your existing perimeter device"],
+  "prerequisites": ["Defender for Cloud Apps Discovery licensed (included in some M365 E3 add-on scenarios)"],
+  "expected_volume": "Per snapshot: 20–80 AI apps surfaced for an org of 10k seats.",
+  "false_positive_guidance": "Microsoft's app catalog occasionally mis-categorizes apps; validate before sanctioning/blocking.",
+  "tuning_steps": ["Set a monthly reminder for snapshot upload.", "Track sanctioning decisions in the Governance Toolkit Inventory."],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "microsoft-copilot-consumer", "perplexity", "deepseek", "qwen", "midjourney"],
+  "severity": "Informational",
+  "recommended_response": "RB-003",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-4.1"],
+    "iso_iec_42001": ["8.2"],
+    "nist_csf": ["DE.CM-7", "ID.AM-2"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-001", "AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-01",
+  "last_reviewed": "2026-05-01",
+  "references": [{ "title": "Defender for Cloud Apps — Snapshot reports", "url": "https://learn.microsoft.com/defender-cloud-apps/create-snapshot-cloud-discovery-reports" }]
+}

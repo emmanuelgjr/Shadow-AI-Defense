@@ -1,0 +1,27 @@
+{
+  "slug": "deepseek",
+  "name": "DeepSeek",
+  "vendor": "DeepSeek",
+  "category": "Conversational AI",
+  "enterprise_offering": false,
+  "network_signatures": {
+    "domains": ["chat.deepseek.com", "deepseek.com"],
+    "api_endpoints": ["api.deepseek.com"],
+    "sni_patterns": ["*.deepseek.com"]
+  },
+  "client_signatures": {
+    "mobile_apps": [{ "name": "DeepSeek iOS", "bundle_id": "com.deepseek.chat" }]
+  },
+  "data_egress_concerns": [
+    "Cross-border data flows (servers hosted in PRC per published terms)",
+    "User prompts containing organizational or regulated data",
+    "Code and internal documents"
+  ],
+  "training_use_default": "Hosted service uses inputs for model improvement per published terms. Many enterprises restrict use entirely due to data-residency, regulatory, or sectoral concerns.",
+  "enterprise_dpa_available": false,
+  "risk_profile": { "data_exfiltration": 5, "ip_loss": 5, "output_quality": 3, "integration_risk": 4 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-MS-PV-001", "DET-NET-001"],
+  "recommended_response": "Block",
+  "references": [{ "title": "DeepSeek Privacy Policy", "url": "https://chat.deepseek.com/privacy_policy" }],
+  "last_reviewed": "2026-05-01"
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "chatgpt-for-google-extension",
+  "name": "ChatGPT for Google (extension)",
+  "vendor": "wong2",
+  "category": "Browser Extension",
+  "enterprise_offering": false,
+  "network_signatures": {
+    "domains": ["chat.openai.com"],
+    "sni_patterns": ["*.openai.com"]
+  },
+  "client_signatures": {
+    "browser_extensions": [{ "name": "ChatGPT for Google", "id_chrome": "jgjaeacdkonaoafenlfkkkmbaopkbilf", "risk": "elevated" }]
+  },
+  "data_egress_concerns": ["Search-query content sent alongside organizational identity context", "Pages viewed when the extension is invoked"],
+  "training_use_default": "Routes through ChatGPT consumer endpoints; data governed by consumer ChatGPT terms unless the user has Enterprise sign-in.",
+  "enterprise_dpa_available": false,
+  "risk_profile": { "data_exfiltration": 4, "ip_loss": 4, "output_quality": 3, "integration_risk": 3 },
+  "detection_rules": ["DET-MS-MDE-001"],
+  "recommended_response": "Block",
+  "references": [],
+  "last_reviewed": "2026-05-01"
+}

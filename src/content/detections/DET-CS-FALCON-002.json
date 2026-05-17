@@ -1,0 +1,39 @@
+{
+  "id": "DET-CS-FALCON-002",
+  "name": "CrowdStrike Falcon Data Protection — sensitive content to AI domains",
+  "description": "Falcon Data Protection policy detecting sensitive-content uploads to consumer AI domains.",
+  "platform": "CrowdStrike Falcon",
+  "detection_type": "DLP",
+  "rule_language": "config",
+  "rule_query": "# Falcon Data Protection — Policy: 'Sensitive content to AI domains'\n#\n# Source: Endpoint (browser, desktop AI clients)\n# Destination: Domains in (chat.openai.com, claude.ai, gemini.google.com, perplexity.ai,\n#                          chatgpt.com, copilot.microsoft.com, deepseek.com, qwen.ai)\n# Content patterns:\n#   - PII detectors: SSN, SIN, CCN, IBAN, IP-internal\n#   - Source code detectors: file extensions .py/.ts/.go/.java in browser-upload events\n#   - Custom content classifiers: Internal-Project-Codenames, Customer-ID patterns\n#\n# Actions:\n#   - Audit-only for 14 days\n#   - Then Block-with-override; user prompt explains policy, links to approved tools\n#   - Generate Falcon Detection event; route to AI Governance triage queue",
+  "rule_explanation": "CrowdStrike Falcon Data Protection (formerly Flow) covers a similar workflow to Purview Endpoint DLP for non-Microsoft-stack environments. Pair with policy + comms rollout.",
+  "required_data_sources": ["CrowdStrike Falcon Data Protection module"],
+  "prerequisites": [
+    "Falcon Data Protection licensed and enabled",
+    "Sensor at version supporting Data Protection",
+    "Content classifiers configured (PII detectors out-of-the-box; custom classifiers require ~30 days of training)",
+    "Approved-tool launch communicated prior to enforcement"
+  ],
+  "expected_volume": "Comparable to DET-MS-PV-001: ~5–30 events/day per 10k seats after tuning.",
+  "false_positive_guidance": "Same categories as Purview: internal docs with example PII, sanitized code, test accounts, cross-language false matches.",
+  "tuning_steps": [
+    "Audit-only for 14 days, classify each event.",
+    "Refine custom classifiers.",
+    "Move to Block-with-override.",
+    "Hard block only for regulated data classes (PHI, PCI primary account numbers)."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity", "microsoft-copilot-consumer", "deepseek"],
+  "severity": "High",
+  "recommended_response": "RB-002",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7", "MANAGE-2.2"],
+    "iso_iec_42001": ["8.2", "8.3"],
+    "mitre_attack": ["T1567.002"],
+    "nist_csf": ["DE.CM-3", "PR.DS-5"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020", "AI-CTRL-013"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-01",
+  "last_reviewed": "2026-05-01",
+  "references": [{ "title": "CrowdStrike Falcon Data Protection", "url": "https://www.crowdstrike.com/data-protection/" }]
+}

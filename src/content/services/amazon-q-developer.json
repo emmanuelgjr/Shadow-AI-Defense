@@ -1,0 +1,24 @@
+{
+  "slug": "amazon-q-developer",
+  "name": "Amazon Q Developer (formerly CodeWhisperer)",
+  "vendor": "Amazon Web Services",
+  "category": "Code Assistant",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Amazon Q Developer Pro",
+  "network_signatures": {
+    "domains": ["codewhisperer.us-east-1.amazonaws.com", "q.aws.amazon.com"],
+    "api_endpoints": ["codewhisperer.amazonaws.com"],
+    "sni_patterns": ["*.amazonaws.com"]
+  },
+  "client_signatures": {
+    "process_names": ["aws-toolkit-vscode"]
+  },
+  "data_egress_concerns": ["Source code", "AWS resource identifiers"],
+  "training_use_default": "Pro tier explicitly does not train on customer code. Free tier may use content for service improvement per AWS terms.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 3, "ip_loss": 3, "output_quality": 3, "integration_risk": 2 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [{ "title": "Amazon Q Developer Documentation", "url": "https://docs.aws.amazon.com/amazonq/" }],
+  "last_reviewed": "2026-05-01"
+}

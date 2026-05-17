@@ -1,0 +1,26 @@
+{
+  "slug": "qwen",
+  "name": "Qwen / Tongyi Qianwen",
+  "vendor": "Alibaba",
+  "category": "Conversational AI",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Alibaba Cloud Model Studio",
+  "network_signatures": {
+    "domains": ["chat.qwen.ai", "tongyi.aliyun.com"],
+    "api_endpoints": ["dashscope.aliyuncs.com"],
+    "sni_patterns": ["*.qwen.ai", "*.aliyun.com"]
+  },
+  "client_signatures": {},
+  "data_egress_concerns": [
+    "Cross-border data flows (servers hosted in PRC)",
+    "User-entered organizational data",
+    "Code and intellectual property"
+  ],
+  "training_use_default": "Hosted service governed by Alibaba Cloud privacy terms; enterprise-tier deployments may permit explicit training-use exclusion.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 5, "ip_loss": 4, "output_quality": 3, "integration_risk": 4 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Block",
+  "references": [{ "title": "Alibaba Cloud Privacy", "url": "https://www.alibabacloud.com/help/en/legal/latest/privacy-policy" }],
+  "last_reviewed": "2026-05-01"
+}

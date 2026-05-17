@@ -1,0 +1,22 @@
+{
+  "slug": "mistral-le-chat",
+  "name": "Le Chat",
+  "vendor": "Mistral AI",
+  "category": "Conversational AI",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Mistral La Plateforme / Le Chat Enterprise",
+  "network_signatures": {
+    "domains": ["chat.mistral.ai"],
+    "api_endpoints": ["api.mistral.ai"],
+    "sni_patterns": ["*.mistral.ai"]
+  },
+  "client_signatures": {},
+  "data_egress_concerns": ["User prompts containing organizational data", "Code", "Customer-context queries"],
+  "training_use_default": "Consumer tier: opt-out available; default behavior described in Mistral's privacy terms. Enterprise: training-use exclusion contractually available.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 3, "ip_loss": 4, "output_quality": 3, "integration_risk": 3 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Conditional",
+  "references": [{ "title": "Mistral AI Privacy Policy", "url": "https://mistral.ai/privacy-policy" }],
+  "last_reviewed": "2026-05-01"
+}

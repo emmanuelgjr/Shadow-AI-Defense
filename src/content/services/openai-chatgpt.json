@@ -1,0 +1,41 @@
+{
+  "slug": "openai-chatgpt",
+  "name": "ChatGPT",
+  "vendor": "OpenAI",
+  "category": "Conversational AI",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "ChatGPT Enterprise / ChatGPT Team",
+  "network_signatures": {
+    "domains": ["chat.openai.com", "chatgpt.com", "auth.openai.com", "auth0.openai.com"],
+    "api_endpoints": ["api.openai.com", "platform.openai.com"],
+    "cdn_domains": ["cdn.openai.com", "openaiusercontent.com"],
+    "sni_patterns": ["*.openai.com", "*.chatgpt.com", "*.openaiusercontent.com"]
+  },
+  "client_signatures": {
+    "user_agents": ["ChatGPT/* (macOS)", "ChatGPT/* (Windows)"],
+    "process_names": ["ChatGPT.app (macOS)", "ChatGPT.exe (Windows)"],
+    "browser_extensions": [{ "name": "ChatGPT for Google", "id_chrome": "jgjaeacdkonaoafenlfkkkmbaopkbilf", "risk": "elevated" }],
+    "desktop_apps": [{ "name": "ChatGPT Desktop", "macOS_bundle": "com.openai.chat", "windows_publisher": "OpenAI, OPC" }],
+    "mobile_apps": [
+      { "name": "ChatGPT iOS", "bundle_id": "com.openai.chat" },
+      { "name": "ChatGPT Android", "package_id": "com.openai.chatgpt" }
+    ]
+  },
+  "data_egress_concerns": [
+    "Customer PII pasted into prompts",
+    "Code containing proprietary algorithms or secrets",
+    "Internal documents uploaded for summarization",
+    "Meeting transcripts containing confidential discussion",
+    "Customer support transcripts containing customer data"
+  ],
+  "training_use_default": "Free and Plus tiers: data may be used for training unless user opts out. Team/Enterprise tiers: data is not used for training by default and is contractually excluded.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 5, "ip_loss": 5, "output_quality": 3, "integration_risk": 3 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-MS-PV-001", "DET-MS-MCAS-001", "DET-NET-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [
+    { "title": "OpenAI Enterprise Privacy", "url": "https://openai.com/enterprise-privacy" },
+    { "title": "OpenAI API data usage policies", "url": "https://platform.openai.com/docs/policies/data" }
+  ],
+  "last_reviewed": "2026-05-01"
+}

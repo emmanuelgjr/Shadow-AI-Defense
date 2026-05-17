@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { codeToHtml } from 'shiki';
+
+export async function getStaticPaths() {
+  const detections = await getCollection('detections');
+  return detections.map((d) => ({ params: { id: d.data.id }, props: { detection: d.data } }));
+}
+const { detection } = Astro.props;
+
+const langMap: Record<string, string> = {
+  KQL: 'kusto',
+  SPL: 'splunk',
+  'Falcon CQL': 'sql',
+  regex: 'regex',
+  Suricata: 'yaml',
+  config: 'ini',
+};
+const highlighted = await codeToHtml(detection.rule_query, {
+  lang: langMap[detection.rule_language] ?? 'plaintext',
+  theme: 'github-dark-dimmed',
+});
+const fm = detection.framework_mappings;
+---
+
+<BaseLayout
+  title={`${detection.name} (${detection.id}) — ${detection.platform} — Shadow AI Defense`}
+  description={detection.description.slice(0, 160)}
+  ogType="article"
+>
+  <article class="max-w-content mx-auto px-6 lg:px-8 py-12">
+    <a href="/detections" class="text-sm text-ink-500 hover:text-accent-700">← All detections</a>
+
+    <header class="border-b border-ink-200 pb-8 mt-3 mb-8">
+      <div class="flex flex-wrap items-center gap-2 mb-2">
+        <span class="font-mono text-sm text-ink-500">{detection.id}</span>
+        <span class="badge-accent">{detection.platform}</span>
+        <span class="badge-neutral">{detection.detection_type}</span>
+        <span class="badge-neutral">{detection.rule_language}</span>
+        <span class="badge-neutral">Severity: {detection.severity}</span>
+      </div>
+      <h1 class="font-display font-semibold text-3xl md:text-4xl tracking-tight text-ink-900">{detection.name}</h1>
+      <p class="mt-3 text-ink-700 max-w-prose-wide">{detection.description}</p>
+    </header>
+
+    <div class="lg:grid lg:grid-cols-[1fr_320px] lg:gap-12">
+      <div>
+        <section class="mb-10">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-xl font-semibold text-ink-900">Rule</h2>
+            <button
+              type="button"
+              data-copy-target="rule-block"
+              class="btn btn-secondary btn-sm"
+              onclick="(async () => { const t = document.getElementById('rule-source'); if (t) { await navigator.clipboard.writeText(t.textContent || ''); }})()"
+            >Copy</button>
+          </div>
+          <div class="rounded-lg overflow-hidden border border-ink-800">
+            <Fragment set:html={highlighted} />
+          </div>
+          <pre id="rule-source" class="hidden">{detection.rule_query}</pre>
+        </section>
+
+        <div class="prose prose-lg max-w-prose-wide">
+          <h2>How it works</h2>
+          <p>{detection.rule_explanation}</p>
+
+          <h2>Required data sources</h2>
+          <ul>{detection.required_data_sources.map((s) => <li>{s}</li>)}</ul>
+
+          <h2>Prerequisites</h2>
+          <ul>{detection.prerequisites.map((s) => <li>{s}</li>)}</ul>
+
+          <h2>Expected volume</h2>
+          <p>{detection.expected_volume}</p>
+
+          <h2>False-positive guidance</h2>
+          <p>{detection.false_positive_guidance}</p>
+
+          <h2>Tuning steps</h2>
+          <ol>{detection.tuning_steps.map((s) => <li>{s}</li>)}</ol>
+
+          <h2>Framework mappings</h2>
+          <ul>
+            {fm.nist_ai_rmf?.length && <li><strong>NIST AI RMF:</strong> {fm.nist_ai_rmf.join(', ')}</li>}
+            {fm.iso_iec_42001?.length && <li><strong>ISO/IEC 42001:</strong> {fm.iso_iec_42001.join(', ')}</li>}
+            {fm.mitre_attack?.length && <li><strong>MITRE ATT&amp;CK:</strong> {fm.mitre_attack.join(', ')}</li>}
+            {fm.nist_csf?.length && <li><strong>NIST CSF:</strong> {fm.nist_csf.join(', ')}</li>}
+          </ul>
+
+          {detection.ai_controls_catalog_refs.length > 0 && (
+            <>
+              <h2>Related AI Controls Catalog entries</h2>
+              <ul>
+                {detection.ai_controls_catalog_refs.map((id) => (
+                  <li><a href={`https://aicontrolscatalog.dev/controls/${id}`}>{id}</a></li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+      </div>
+
+      <aside class="lg:sticky lg:top-20 lg:self-start mt-12 lg:mt-0 space-y-4">
+        <div class="card">
+          <h3 class="text-sm font-semibold text-ink-900 mb-2">Detects</h3>
+          {detection.detects_services.length === 0 ? (
+            <p class="text-sm text-ink-500">Not service-specific.</p>
+          ) : (
+            <ul class="space-y-1 text-sm">
+              {detection.detects_services.map((s) => (
+                <li><a href={`/services/${s}`} class="text-accent-700 hover:underline">{s}</a></li>
+              ))}
+            </ul>
+          )}
+        </div>
+        {detection.recommended_response && (
+          <div class="card">
+            <h3 class="text-sm font-semibold text-ink-900 mb-2">Response runbook</h3>
+            <a href={`/runbooks/${detection.recommended_response}`} class="text-accent-700 hover:underline font-mono text-sm">{detection.recommended_response}</a>
+          </div>
+        )}
+        <div class="card">
+          <h3 class="text-sm font-semibold text-ink-900 mb-2">Authored</h3>
+          <p class="text-sm text-ink-600">{detection.author}</p>
+          <p class="text-xs text-ink-500 mt-1">Reviewed {detection.last_reviewed}</p>
+        </div>
+      </aside>
+    </div>
+  </article>
+</BaseLayout>

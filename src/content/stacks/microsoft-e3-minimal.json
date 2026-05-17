@@ -1,0 +1,28 @@
+{
+  "slug": "microsoft-e3-minimal",
+  "name": "Microsoft minimal (E3 only)",
+  "short": "M365 E3 — limited",
+  "description": "Microsoft 365 E3 without Defender for Endpoint P2 or Purview add-ons. Detection coverage is limited; relies on network-level signals and policy/comms-driven controls.",
+  "applicable_rule_platforms": ["Generic Network", "Defender for Cloud Apps (basic)", "Conditional Access"],
+  "not_possible_rules": ["DET-MS-SEN-001", "DET-MS-SEN-002", "DET-MS-SEN-003", "DET-MS-SEN-004", "DET-MS-SEN-005", "DET-MS-MDE-001", "DET-MS-MDE-002", "DET-MS-PV-001"],
+  "compensating_controls": [
+    "Network-egress filtering at the firewall / proxy using the ConsumerLLMDomains watchlist (DET-NET-001 + DET-NET-002).",
+    "Conditional Access policies blocking unmanaged-device access to corporate apps (DET-MS-CA-001) to reduce BYO bypass.",
+    "Defender for Cloud Apps basic shadow-app discovery via manual log upload (DET-MS-MCAS-MANUAL-001).",
+    "Heavy reliance on AUP enforcement via comms and manager talking points.",
+    "Strongly recommended: upgrade path to E5 Security or Defender for Endpoint P2 + Purview add-ons before a mature program is achievable."
+  ],
+  "things_to_know": [
+    { "title": "Endpoint DLP not available", "content": "Without Purview DLP, you cannot block sensitive-data uploads at the endpoint. Compensate with network-layer filtering and explicit AUP.", "severity": "warn" },
+    { "title": "Limited investigative depth", "content": "Without DeviceNetworkEvents from Defender for Endpoint, you cannot pivot from a single user's alert to all their devices' AI-related connections. Investigations rely on firewall logs.", "severity": "warn" },
+    { "title": "AUP-driven control", "content": "On this stack, the AI Acceptable Use Policy and approved-tool comms are the primary control. Technical detection is supporting evidence, not the gate.", "severity": "info" }
+  ],
+  "policy_token_replacements": {
+    "siem_tool": "your central log management",
+    "dlp_tool": "network egress filtering at your secure web gateway",
+    "edr_tool": "Defender Antivirus (with cloud-delivered protection)",
+    "casb_tool": "Defender for Cloud Apps (manual log upload)",
+    "swg_tool": "your secure web gateway / firewall"
+  },
+  "recommended_deployment_order": ["DET-NET-001", "DET-MS-CA-001", "DET-MS-MCAS-MANUAL-001", "DET-NET-002"]
+}

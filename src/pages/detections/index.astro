@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const detections = (await getCollection('detections')).map((d) => d.data);
+const platforms = Array.from(new Set(detections.map((d) => d.platform))).sort();
+
+const sevClass = (s: string) =>
+  s === 'High' ? 'bg-risk-50 text-risk-700'
+  : s === 'Medium' ? 'bg-warn-50 text-warn-700'
+  : s === 'Low' ? 'bg-info-50 text-info-700'
+  : 'bg-ink-100 text-ink-700';
+---
+
+<BaseLayout
+  title="Detection Rule Library — Shadow AI Defense"
+  description={`Production-grade detection rules for Microsoft Sentinel, Purview DLP, Defender for Endpoint, CrowdStrike Falcon, generic network. ${detections.length} rules.`}
+>
+  <section class="max-w-content mx-auto px-6 lg:px-8 py-12">
+    <p class="text-sm font-medium text-accent-700">Detections</p>
+    <h1 class="font-display font-semibold text-3xl md:text-4xl tracking-tight text-ink-900 mt-2">
+      Detection Rule Library
+    </h1>
+    <p class="mt-3 text-ink-600 max-w-prose-wide">
+      {detections.length} detection rules across {platforms.length} platforms.
+      Pick your stack at <a href="/stack" class="text-accent-700 hover:underline">/stack</a> to filter the list to what's possible on your environment.
+    </p>
+
+    {platforms.map((p) => (
+      <div class="mt-12">
+        <h2 class="font-display font-semibold text-2xl text-ink-900 tracking-tight">{p}</h2>
+        <ul class="grid lg:grid-cols-2 gap-4 mt-4">
+          {detections.filter((d) => d.platform === p).map((d) => (
+            <li>
+              <a href={`/detections/${d.id}`} class="card-interactive block h-full">
+                <div class="flex items-start justify-between gap-2">
+                  <p class="font-mono text-xs text-ink-500">{d.id}</p>
+                  <span class={`badge ${sevClass(d.severity)}`}>{d.severity}</span>
+                </div>
+                <h3 class="text-lg font-semibold text-ink-900 mt-1">{d.name}</h3>
+                <p class="text-sm text-ink-600 mt-2 line-clamp-2">{d.description}</p>
+                <p class="text-xs text-ink-500 mt-3">{d.rule_language} · {d.detection_type}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </section>
+</BaseLayout>

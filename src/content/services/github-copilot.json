@@ -1,0 +1,27 @@
+{
+  "slug": "github-copilot",
+  "name": "GitHub Copilot",
+  "vendor": "GitHub / Microsoft",
+  "category": "Code Assistant",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "GitHub Copilot Business / Copilot Enterprise",
+  "network_signatures": {
+    "domains": ["copilot.github.com", "github.com"],
+    "api_endpoints": ["api.githubcopilot.com", "default.githubcopilot.com", "proxy.githubcopilot.com"],
+    "sni_patterns": ["*.githubcopilot.com"]
+  },
+  "client_signatures": {
+    "process_names": ["copilot-language-server", "GitHub Copilot.app (macOS)"],
+    "browser_extensions": [{ "name": "GitHub Copilot for VS Code", "id_chrome": "", "risk": "low" }]
+  },
+  "data_egress_concerns": ["Source code", "API keys/secrets in code", "Code comments containing customer or internal context"],
+  "training_use_default": "Business and Enterprise tiers contractually exclude customer code from training. Free tier (Copilot Free) and Individual tier defaults differ — review current GitHub terms.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 4, "ip_loss": 4, "output_quality": 3, "integration_risk": 3 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [
+    { "title": "GitHub Copilot Trust Center", "url": "https://github.com/security/advanced-security/ai-features" }
+  ],
+  "last_reviewed": "2026-05-01"
+}

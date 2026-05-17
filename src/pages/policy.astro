@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Shadow AI Policy Starter — Shadow AI Defense"
+  description="Drafted, CC-BY-licensed Shadow AI policy. Customize, share with HR/Legal, adopt."
+>
+  <section class="max-w-3xl mx-auto px-6 lg:px-8 py-12">
+    <p class="text-sm font-medium text-accent-700">Policy</p>
+    <h1 class="font-display font-semibold text-3xl md:text-4xl tracking-tight text-ink-900 mt-2">Shadow AI / Acceptable Use of External AI Services</h1>
+    <p class="mt-3 text-ink-600 max-w-prose-wide">A drafted policy you can adapt. CC-BY 4.0 — retain attribution to this repo.</p>
+
+    <div class="prose prose-lg max-w-prose-wide mt-8">
+      <h2>1. Scope and definitions</h2>
+      <p>This policy applies to all employees, contractors, and other authorized users accessing the Company's information assets. "External AI Service" means any third-party generative AI, AI-augmented productivity, or AI-augmented code-assistance service accessed from a managed device, managed identity, or with the Company's data.</p>
+
+      <h2>2. Sanctioned tools</h2>
+      <p>The Company maintains a list of sanctioned AI tools (see the AI Inventory). Use of any non-sanctioned External AI Service for Company business is prohibited unless covered by Section 6 (Exception process).</p>
+
+      <h2>3. Prohibited data categories</h2>
+      <ul>
+        <li>Customer Personal Information of any category;</li>
+        <li>Regulated data (PCI, PHI, banking secrecy data, national-security-relevant material);</li>
+        <li>Source code containing secrets, proprietary algorithms with material trade-secret value, or customer-implementing logic;</li>
+        <li>Internal documents marked Confidential or Restricted;</li>
+        <li>Information subject to attorney-client privilege or litigation hold;</li>
+        <li>Information whose disclosure would breach a third-party confidentiality obligation.</li>
+      </ul>
+
+      <h2>4. Approved-use process</h2>
+      <p>Where a sanctioned tool exists, it is the default. Where one does not exist, route the need via the AI Use-Case Intake (AI Governance Toolkit /inventory). The AI Governance lead, in consultation with Security, Privacy, and the business sponsor, determines suitability and sanctioning path.</p>
+
+      <h2>5. Monitoring disclosure</h2>
+      <p>The Company monitors network and endpoint activity for compliance with this policy. Monitoring includes detection of External AI Service usage and the categories of data conveyed to such services. Monitoring is conducted in accordance with applicable privacy law and the Company's Employee Privacy Notice.</p>
+
+      <h2>6. Exception / risk-acceptance process</h2>
+      <p>Where a legitimate business need cannot be served by a sanctioned tool, an exception may be requested using the Exception Request form. Exceptions are time-bound, conditioned on compensating controls, and approved at the level appropriate to data sensitivity and tool risk tier.</p>
+
+      <h2>7. Browser extensions and OAuth grants</h2>
+      <p>Installation of AI browser extensions and granting of OAuth access to AI applications require advance approval per the Browser Extension and OAuth Governance Standard. The Company maintains technical controls to enforce extension and OAuth approval.</p>
+
+      <h2>8. Disciplinary framework</h2>
+      <p>Violations of this policy may result in disciplinary action up to and including termination, consistent with Company policy and applicable law. The Company's first-occurrence response emphasizes education and approved-tool migration; repeated or wilful violation will be escalated.</p>
+
+      <h2>9. Review cadence</h2>
+      <p>This policy is reviewed at least annually by the AI Governance lead and approved by the AI Governance Committee. Substantive changes are communicated to all employees.</p>
+
+      <hr />
+      <p class="text-sm text-ink-500"><em>Drafted by Emmanuel Guilherme Jr. for Shadow-AI-Defense. Licensed CC-BY 4.0. Adapt to your organization; retain attribution.</em></p>
+    </div>
+  </section>
+</BaseLayout>

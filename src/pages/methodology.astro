@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Methodology — Shadow AI Defense"
+  description="How detection rules are written, validated, and reviewed in this library."
+>
+  <section class="max-w-3xl mx-auto px-6 lg:px-8 py-12">
+    <p class="text-sm font-medium text-accent-700">Methodology</p>
+    <h1 class="font-display font-semibold text-3xl md:text-4xl tracking-tight text-ink-900 mt-2">How the library is built</h1>
+
+    <div class="prose prose-lg max-w-prose-wide mt-8">
+      <h2>Quality bar</h2>
+      <p>Read the <a href="https://github.com/emmanuelgjr/Shadow-AI-Defense/blob/main/DETECTION_QUALITY.md">DETECTION_QUALITY.md</a> for the contribution standard. Each rule must include working query syntax, required data sources, prerequisites, expected volume guidance, false-positive guidance, tuning steps, and at least one framework mapping.</p>
+
+      <h2>Authorship</h2>
+      <p>Every rule is authored by a practitioner with field experience. No vendor-supplied marketing rules. Where a rule comes from a community contributor, attribution is permanent.</p>
+
+      <h2>Stack realism</h2>
+      <p>Each rule is mapped to one or more specific stack profiles. Where a rule cannot be implemented on a stack, that's stated explicitly with compensating controls.</p>
+
+      <h2>Honest about limits</h2>
+      <p>The library does not claim coverage where it doesn't exist. Personal-device, BYO-API-key, and mobile-data-plan channels remain hard or impossible to detect from the corporate environment; the library says so.</p>
+
+      <h2>Review cadence</h2>
+      <ul>
+        <li>Service signatures: monthly (LLM services move fast).</li>
+        <li>Detection rules: quarterly (platform changes, query syntax evolution).</li>
+        <li>Runbooks: annually or on a material program development.</li>
+        <li>Stack profiles: quarterly.</li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>

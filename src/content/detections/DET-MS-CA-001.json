@@ -1,0 +1,36 @@
+{
+  "id": "DET-MS-CA-001",
+  "name": "Entra Conditional Access — block unmanaged-device access to corporate apps",
+  "description": "Conditional Access policy denying access to corporate apps from unmanaged devices, reducing the BYO bypass path for Shadow AI usage.",
+  "platform": "Conditional Access",
+  "detection_type": "Identity",
+  "rule_language": "config",
+  "rule_query": "# Microsoft Entra Conditional Access — Policy: 'Block unmanaged-device access to corp apps'\n#\n# Assignments:\n#   - Users: All users (exclude break-glass accounts)\n#   - Cloud apps: All cloud apps (or scope to data-sensitive apps for phased rollout)\n#   - Conditions:\n#     - Device platforms: All\n#     - Client apps: All\n#     - Device state: Exclude Hybrid Azure AD joined OR compliant\n#\n# Access controls:\n#   - Grant: Block access\n#\n# Rationale: a managed device is the policy-enforcement endpoint for Endpoint DLP, MDE,\n# and most Shadow AI prevention. Unmanaged-device access undermines all of it.",
+  "rule_explanation": "Foundational identity policy. Doesn't directly detect Shadow AI, but eliminates the most common bypass: 'I'll just open my personal laptop and paste it into ChatGPT there.' If the user can't pull corporate context onto that laptop, they can't paste it into a consumer AI tool.",
+  "required_data_sources": ["Microsoft Entra ID P1 or higher", "Intune (for device compliance state)"],
+  "prerequisites": [
+    "Entra ID P1+ licensed",
+    "Devices enrolled in Intune (or Hybrid Azure AD joined)",
+    "Break-glass accounts created and excluded"
+  ],
+  "expected_volume": "Initial spike of legitimate-user blocks during phased rollout. Drops to near zero after enrollment.",
+  "false_positive_guidance": "Phase rollout by user group; provide enrollment self-service.",
+  "tuning_steps": [
+    "Start with report-only mode for 2 weeks.",
+    "Phase rollout: pilot group → low-risk users → enterprise-wide.",
+    "Pair with self-service device enrollment + clear escalation path."
+  ],
+  "detects_services": [],
+  "severity": "Informational",
+  "recommended_response": "RB-001",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1"],
+    "iso_iec_42001": ["8.2"],
+    "nist_csf": ["PR.AC-1", "PR.AC-3"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-01",
+  "last_reviewed": "2026-05-01",
+  "references": [{ "title": "Conditional Access policy templates", "url": "https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-policies" }]
+}

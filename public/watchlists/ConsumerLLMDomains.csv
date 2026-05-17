@@ -1,0 +1,25 @@
+SearchKey,Service,Vendor,Category,LastReviewed,Notes
+chat.openai.com,ChatGPT,OpenAI,Conversational AI,2026-05-01,Consumer web interface
+chatgpt.com,ChatGPT,OpenAI,Conversational AI,2026-05-01,Consumer web (newer domain)
+api.openai.com,ChatGPT,OpenAI,API,2026-05-01,API endpoint
+claude.ai,Claude,Anthropic,Conversational AI,2026-05-01,Consumer web interface
+api.anthropic.com,Claude,Anthropic,API,2026-05-01,API endpoint
+gemini.google.com,Gemini,Google,Conversational AI,2026-05-01,Consumer interface
+bard.google.com,Gemini (legacy),Google,Conversational AI,2026-05-01,Legacy redirect
+aistudio.google.com,Gemini,Google,Conversational AI,2026-05-01,AI Studio
+generativelanguage.googleapis.com,Gemini,Google,API,2026-05-01,API endpoint
+copilot.microsoft.com,Copilot (consumer),Microsoft,Conversational AI,2026-05-01,Consumer chat
+perplexity.ai,Perplexity,Perplexity AI,Search,2026-05-01,Consumer search
+api.perplexity.ai,Perplexity,Perplexity AI,API,2026-05-01,API endpoint
+chat.mistral.ai,Le Chat,Mistral AI,Conversational AI,2026-05-01,Consumer interface
+api.mistral.ai,Le Chat,Mistral AI,API,2026-05-01,API endpoint
+chat.deepseek.com,DeepSeek,DeepSeek,Conversational AI,2026-05-01,Consumer web (PRC-hosted)
+api.deepseek.com,DeepSeek,DeepSeek,API,2026-05-01,API endpoint (PRC-hosted)
+chat.qwen.ai,Qwen,Alibaba,Conversational AI,2026-05-01,Consumer web (PRC-hosted)
+tongyi.aliyun.com,Qwen,Alibaba,Conversational AI,2026-05-01,Alibaba branded interface
+grok.com,Grok,xAI,Conversational AI,2026-05-01,Consumer interface
+x.ai,Grok,xAI,API,2026-05-01,API endpoint
+api.x.ai,Grok,xAI,API,2026-05-01,API endpoint
+midjourney.com,Midjourney,Midjourney,Image Gen,2026-05-01,Image generation web
+otter.ai,Otter,Otter.ai,Productivity,2026-05-01,Meeting transcription
+app.otter.ai,Otter,Otter.ai,Productivity,2026-05-01,Meeting transcription app

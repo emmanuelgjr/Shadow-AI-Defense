@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const services = await getCollection('services');
+const detections = await getCollection('detections');
+const runbooks = await getCollection('runbooks');
+const stacks = await getCollection('stacks');
+---
+
+<BaseLayout
+  title="Shadow AI Defense — Detect and respond to Shadow AI in your enterprise"
+  description="Detection rule library, response runbooks, employee comms templates, and policy starter for the #1 AI risk on every CISO's desk. Stack-aware: pick yours, see only what works."
+>
+  <section class="max-w-content mx-auto px-6 lg:px-8 pt-16 pb-12">
+    <p class="text-sm font-medium text-accent-700">Defend</p>
+    <h1 class="font-display font-semibold tracking-tight text-4xl md:text-5xl text-ink-900 mt-3 max-w-3xl">
+      Detect and respond to Shadow AI in your enterprise.
+    </h1>
+    <p class="mt-5 text-lg text-ink-600 leading-relaxed max-w-3xl">
+      The detection rule library, response runbooks, employee comms templates,
+      and policy starter for the #1 AI risk on every CISO's desk in 2026.
+      Stack-aware: pick yours, see only what works.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="/stack" class="btn btn-primary btn-lg">Pick your stack →</a>
+      <a href="/detections" class="btn btn-secondary btn-lg">Browse detections</a>
+    </div>
+  </section>
+
+  <section class="max-w-content mx-auto px-6 lg:px-8 py-12 border-t border-ink-100">
+    <h2 class="font-display font-semibold text-3xl text-ink-900 tracking-tight">What's inside</h2>
+    <div class="grid md:grid-cols-4 gap-4 mt-8">
+      <a href="/services" class="card hover:shadow-lift transition">
+        <p class="text-3xl font-semibold text-accent-700">{services.length}</p>
+        <h3 class="mt-1 text-base font-semibold text-ink-900">AI services</h3>
+        <p class="mt-1 text-sm text-ink-600">Network + client signatures.</p>
+      </a>
+      <a href="/detections" class="card hover:shadow-lift transition">
+        <p class="text-3xl font-semibold text-accent-700">{detections.length}</p>
+        <h3 class="mt-1 text-base font-semibold text-ink-900">Detection rules</h3>
+        <p class="mt-1 text-sm text-ink-600">Sentinel / Purview / Falcon / network.</p>
+      </a>
+      <a href="/runbooks" class="card hover:shadow-lift transition">
+        <p class="text-3xl font-semibold text-accent-700">{runbooks.length}</p>
+        <h3 class="mt-1 text-base font-semibold text-ink-900">Runbooks</h3>
+        <p class="mt-1 text-sm text-ink-600">Decision trees, RACI, metrics.</p>
+      </a>
+      <a href="/stack" class="card hover:shadow-lift transition">
+        <p class="text-3xl font-semibold text-accent-700">{stacks.length}</p>
+        <h3 class="mt-1 text-base font-semibold text-ink-900">Stack profiles</h3>
+        <p class="mt-1 text-sm text-ink-600">Tailored to your environment.</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="max-w-content mx-auto px-6 lg:px-8 py-12 border-t border-ink-100">
+    <div class="max-w-prose-wide">
+      <h2 class="font-display font-semibold text-3xl text-ink-900 tracking-tight">Why this exists</h2>
+      <p class="mt-4 text-ink-700 leading-relaxed">
+        Shadow AI is the #1 AI risk on every CISO's desk in 2026. The current
+        public state is fragmented blog posts and scattered KQL. CISOs are
+        paying consultants tens of thousands for what is essentially a
+        curated detection rule set and a runbook. This repo is the canonical,
+        free, open alternative.
+      </p>
+      <p class="mt-4 text-ink-700 leading-relaxed">
+        Authored by an IT auditor who proposed the exact Shadow AI / DLP
+        control at a Tier 1 global multinational on a Microsoft-centric stack
+        (Defender, Purview, Sentinel) plus CrowdStrike. This is the
+        generalized, public version of that work.
+      </p>
+      <a href="/about" class="inline-block mt-4 text-accent-700 font-medium hover:text-accent-800">About →</a>
+    </div>
+  </section>
+</BaseLayout>

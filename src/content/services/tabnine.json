@@ -1,0 +1,24 @@
+{
+  "slug": "tabnine",
+  "name": "Tabnine",
+  "vendor": "Tabnine",
+  "category": "Code Assistant",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Tabnine Enterprise (SaaS / VPC / self-hosted)",
+  "network_signatures": {
+    "domains": ["tabnine.com"],
+    "api_endpoints": ["api.tabnine.com"],
+    "sni_patterns": ["*.tabnine.com"]
+  },
+  "client_signatures": {
+    "process_names": ["tabnine-core", "TabNine"]
+  },
+  "data_egress_concerns": ["Source code", "Repository names and metadata"],
+  "training_use_default": "Enterprise tier supports air-gapped self-hosted deployment with no telemetry. Hosted tiers commit to not using code for training.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 3, "ip_loss": 3, "output_quality": 3, "integration_risk": 2 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [{ "title": "Tabnine Security", "url": "https://www.tabnine.com/our-customers-data-and-our-models" }],
+  "last_reviewed": "2026-05-01"
+}

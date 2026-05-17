@@ -1,0 +1,25 @@
+{
+  "slug": "otter-ai",
+  "name": "Otter.ai",
+  "vendor": "Otter.ai",
+  "category": "Productivity",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Otter Enterprise",
+  "network_signatures": {
+    "domains": ["otter.ai", "www.otter.ai"],
+    "api_endpoints": ["app.otter.ai"],
+    "sni_patterns": ["*.otter.ai"]
+  },
+  "client_signatures": {
+    "browser_extensions": [{ "name": "Otter.ai Chrome", "id_chrome": "", "risk": "elevated" }],
+    "process_names": ["Otter.app (macOS)"]
+  },
+  "data_egress_concerns": ["Recorded meeting audio", "Transcripts containing confidential discussion", "Customer-identifying meeting metadata"],
+  "training_use_default": "Enterprise tier contractually excludes customer audio/transcripts from training. Consumer tiers retain broader rights — review.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 5, "ip_loss": 4, "output_quality": 2, "integration_risk": 3 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-MS-MCAS-001"],
+  "recommended_response": "Conditional",
+  "references": [{ "title": "Otter Privacy", "url": "https://otter.ai/privacy" }],
+  "last_reviewed": "2026-05-01"
+}

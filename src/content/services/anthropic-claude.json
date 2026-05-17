@@ -1,0 +1,32 @@
+{
+  "slug": "anthropic-claude",
+  "name": "Claude",
+  "vendor": "Anthropic",
+  "category": "Conversational AI",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Claude Enterprise / Claude Team",
+  "network_signatures": {
+    "domains": ["claude.ai", "console.anthropic.com"],
+    "api_endpoints": ["api.anthropic.com"],
+    "sni_patterns": ["*.claude.ai", "*.anthropic.com"]
+  },
+  "client_signatures": {
+    "process_names": ["Claude.app (macOS)", "Claude.exe (Windows)"],
+    "desktop_apps": [{ "name": "Claude Desktop", "macOS_bundle": "com.anthropic.claudefordesktop" }],
+    "mobile_apps": [
+      { "name": "Claude iOS", "bundle_id": "com.anthropic.claudeios" },
+      { "name": "Claude Android", "package_id": "com.anthropic.claude" }
+    ]
+  },
+  "data_egress_concerns": ["Customer PII", "Source code", "Internal strategy documents", "Customer support transcripts"],
+  "training_use_default": "Consumer tiers (Free/Pro): inputs and outputs are not used to train models by default. Team/Enterprise: same default plus contractual confirmation.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 4, "ip_loss": 4, "output_quality": 2, "integration_risk": 3 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-MS-PV-001", "DET-NET-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [
+    { "title": "Anthropic Privacy Policy", "url": "https://www.anthropic.com/legal/privacy" },
+    { "title": "Anthropic Trust Center", "url": "https://trust.anthropic.com" }
+  ],
+  "last_reviewed": "2026-05-01"
+}

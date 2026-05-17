@@ -1,0 +1,51 @@
+{
+  "id": "DET-MS-PV-001",
+  "name": "Sensitive data uploaded to consumer LLM services",
+  "description": "Detects upload of files or text containing organizational sensitive information types to consumer AI services via Edge for Business, prevents the action, and notifies the user with policy guidance.",
+  "platform": "Purview DLP",
+  "detection_type": "DLP",
+  "rule_language": "config",
+  "rule_query": "# Purview DLP — Endpoint policy configuration\n# Scope: Endpoint (Edge for Business browser uploads, copy-to-cloud, paste-to-browser)\n# Sensitive info types (built-in + custom):\n#   - Built-in: Credit Card Number, Canadian SIN, US SSN, Banking Account Number,\n#     Health/Medical Terms, IBAN, IP Address Range (internal)\n#   - Custom SIT: Customer-ID-Pattern, Internal-Project-Codename, Source-Code-Markers\n#\n# Conditions (any of these):\n#   - Upload to cloud service / paste to browser where destination URL matches\n#     the 'Consumer LLM Domains' service domain group\n#   - Copy to clipboard followed by paste to one of the above domains within 5 min\n#   - Content contains 1+ instances of any sensitive info type listed above\n#\n# Actions:\n#   - Block with override (user can override with business justification — logged)\n#   - Notify user via toast: link to AUP, link to approved enterprise AI tools page\n#   - Generate incident: severity High; assign to AI Governance triage queue\n#   - Log full event including hashed content fingerprint to Activity Explorer\n#\n# Service domain group 'Consumer LLM Domains' must be configured under\n# Purview > Data Loss Prevention > Endpoint settings > Service domains\n# and populated from /watchlists/ConsumerLLMDomains.csv in this repo.",
+  "rule_explanation": "Endpoint DLP policy that blocks (with user override) uploads of content containing organizational sensitive information types to consumer AI services. Captures uploads, pastes, and copy-followed-by-paste patterns. Aligns with EU AI Act employer obligations under Article 4 (AI literacy) and Article 50 (transparency). Pair with the approved-tool launch communications (see /comms) so users know where to take legitimate AI work.",
+  "required_data_sources": [
+    "Microsoft Purview Endpoint DLP enabled",
+    "Devices onboarded to Microsoft Purview (Defender for Endpoint co-onboarding works)",
+    "Edge for Business as managed browser (Chrome and Firefox supported via Purview extension)",
+    "Sensitive info types defined and trained (custom SITs require ~30 days of training)",
+    "Service domain group: ConsumerLLMDomains (from /watchlists/ConsumerLLMDomains.csv)"
+  ],
+  "prerequisites": [
+    "Microsoft 365 E5 Compliance OR Purview Information Protection and Governance add-on",
+    "Devices onboarded — typical org takes 2–4 weeks to reach full coverage",
+    "User comms rolled out PRIOR to enforcement (start with Audit mode for 2 weeks)",
+    "Approved-tool launch communicated — users must know where they CAN take AI work before they're blocked from where they can't",
+    "Override workflow defined — business justification field reviewed by AI Governance weekly"
+  ],
+  "expected_volume": "After 2-week audit-mode tuning and AUP roll-out: ~5–30 events/day per 10k knowledge workers. ~80% will be unintentional (user pastes wrong content, doesn't realize). ~15% will be legitimate use with override needed (route to approved-tool migration). ~5% are concerning — investigate.",
+  "false_positive_guidance": "Major FP categories: (1) internal documentation containing example sensitive-looking strings (sample customer IDs, fictional SSNs in training material) — exclude internal docs path; (2) developers pasting redacted/sanitized code containing pattern remnants — work with Eng leadership; (3) cross-language false matches on IBAN/SIN patterns — refine custom SIT lookups; (4) test environment accounts — exclude.",
+  "tuning_steps": [
+    "Run in Audit mode for 2 weeks, classify every match (TP/FP/legitimate-override).",
+    "Refine custom Sensitive Info Types based on FP analysis.",
+    "Define explicit override-reason taxonomy (Approved-pilot / Legitimate-business-with-no-enterprise-tool / Other).",
+    "Move to Block-with-override; monitor weekly.",
+    "Move to Block-no-override only for confirmed regulated-data SITs (PHI, PCI primary account numbers).",
+    "Add new consumer LLM domains as services launch — update the watchlist monthly."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity", "microsoft-copilot-consumer", "deepseek", "qwen"],
+  "severity": "High",
+  "recommended_response": "RB-002",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7", "MANAGE-2.2"],
+    "iso_iec_42001": ["8.2", "8.3", "8.4"],
+    "mitre_attack": ["T1567.002", "T1078.004"],
+    "nist_csf": ["DE.CM-3", "PR.DS-5"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020", "AI-CTRL-013"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-01",
+  "last_reviewed": "2026-05-01",
+  "references": [
+    { "title": "Microsoft Purview — Endpoint DLP", "url": "https://learn.microsoft.com/purview/endpoint-dlp-learn-about" },
+    { "title": "EU AI Act, Article 4 — AI Literacy", "url": "https://eur-lex.europa.eu/eli/reg/2024/1689" }
+  ]
+}

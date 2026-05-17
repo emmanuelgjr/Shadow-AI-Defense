@@ -1,0 +1,28 @@
+{
+  "id": "DET-MS-MCAS-002",
+  "name": "OAuth grants to AI apps over Microsoft identity",
+  "description": "Detects OAuth consent grants to AI-related apps over Microsoft Entra ID, including agentic and integration applications that may receive broad data access.",
+  "platform": "Defender for Cloud Apps",
+  "detection_type": "Identity",
+  "rule_language": "config",
+  "rule_query": "# Defender for Cloud Apps — OAuth app policy\n# Name: AI OAuth Grant Detection\n#\n# Conditions:\n#   - App category in (Generative AI, AI Code Generation, AI Productivity, Email integrations)\n#   - Permissions include any of: Mail.Read, Files.Read.All, Sites.Read.All, User.Read.All, Calendars.Read\n#   - App publisher verification status != Verified  (broad — apply per org tolerance)\n#\n# Actions:\n#   - Alert: medium-high based on permission scope\n#   - Pause app if permissions include Mail.ReadWrite, Files.ReadWrite.All, or admin-consent-required\n#   - Notify AI Governance + Security",
+  "rule_explanation": "Captures consent-based access by AI apps to Microsoft 365 data, which can carry broader risk than direct LLM use because the app retains durable access. Pair with admin-consent restriction policies.",
+  "required_data_sources": ["Defender for Cloud Apps (MCAS)", "Microsoft Entra ID OAuth apps inventory"],
+  "prerequisites": ["MCAS connected to Entra ID", "Admin-consent workflow configured for sensitive permissions"],
+  "expected_volume": "Low — 0–5 events per week. Each can be high-impact.",
+  "false_positive_guidance": "Some legitimate enterprise AI products have these permissions intentionally; sanction them.",
+  "tuning_steps": ["Maintain a sanctioned-app list with admin consent.", "Restrict user consent to low-risk permission scopes."],
+  "detects_services": [],
+  "severity": "High",
+  "recommended_response": "RB-004",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-2.2"],
+    "iso_iec_42001": ["8.2"],
+    "nist_csf": ["PR.AC-4", "DE.CM-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-019", "AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-01",
+  "last_reviewed": "2026-05-01",
+  "references": [{ "title": "Microsoft Entra OAuth apps governance", "url": "https://learn.microsoft.com/entra/identity/enterprise-apps/manage-consent-requests" }]
+}

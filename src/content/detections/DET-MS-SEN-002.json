@@ -1,0 +1,32 @@
+{
+  "id": "DET-MS-SEN-002",
+  "name": "First-seen consumer LLM domain in environment",
+  "description": "Surfaces newly emerging consumer LLM service domains observed in network telemetry for the first time, prompting watchlist updates and AUP enforcement.",
+  "platform": "Microsoft Sentinel",
+  "detection_type": "Network",
+  "rule_language": "KQL",
+  "rule_query": "// New consumer LLM domains observed in last 7 days\nlet known = _GetWatchlist('ConsumerLLMDomains') | project SearchKey;\nlet candidatePatterns = dynamic(['chat', 'gpt', 'claude', 'gemini', 'copilot', 'mistral', 'qwen', 'deepseek', 'perplex', 'llm.ai', 'grok']);\nDeviceNetworkEvents\n| where Timestamp > ago(7d)\n| where ActionType == 'ConnectionSuccess'\n| extend Domain = tostring(parse_url(RemoteUrl).Host)\n| where isnotempty(Domain)\n| where Domain has_any (candidatePatterns)\n| where Domain !in (known)\n| summarize FirstSeen = min(Timestamp),\n            UniqueUsers = dcount(InitiatingProcessAccountUpn),\n            UniqueDevices = dcount(DeviceName),\n            Sample = take_any(RemoteUrl)\n          by Domain\n| where UniqueUsers >= 2\n| order by FirstSeen desc",
+  "rule_explanation": "Pattern-based discovery of new LLM-adjacent domains not yet on the watchlist. Investigates suspected new services with at least two distinct users.",
+  "required_data_sources": ["Microsoft Defender for Endpoint (DeviceNetworkEvents)", "Sentinel watchlist: ConsumerLLMDomains"],
+  "prerequisites": ["Microsoft 365 E5 or Defender for Endpoint P2", "Existing watchlist deployed (DET-MS-SEN-001 prerequisites)"],
+  "expected_volume": "Low — 1–10 candidate domains per week. Triage takes minutes per domain.",
+  "false_positive_guidance": "Many domains will match the pattern but not be LLM services (e.g., generic 'gpt.example.com' for a non-AI product). Triage manually before adding to watchlist.",
+  "tuning_steps": [
+    "Refine candidatePatterns list as new naming conventions emerge.",
+    "Lower UniqueUsers threshold to 1 if you want very-early signal.",
+    "Add an exclusion list of confirmed-not-LLM domains to reduce repeat triage."
+  ],
+  "detects_services": [],
+  "severity": "Low",
+  "recommended_response": "RB-003",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-4.1"],
+    "iso_iec_42001": ["8.2"],
+    "nist_csf": ["DE.CM-7"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-01",
+  "last_reviewed": "2026-05-01",
+  "references": []
+}

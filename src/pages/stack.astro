@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import StackSelector from '../components/StackPicker/StackSelector.tsx';
+import { getCollection } from 'astro:content';
+
+const stacks = (await getCollection('stacks')).map((s) => ({
+  slug: s.data.slug,
+  name: s.data.name,
+  short: s.data.short,
+  description: s.data.description,
+}));
+---
+
+<BaseLayout
+  title="Choose Your Stack — Shadow AI Defense"
+  description="Pick your security stack to see only the detection rules and runbooks that work for you. 4 stacks supported in v0.1."
+>
+  <section class="max-w-content mx-auto px-6 lg:px-8 py-12">
+    <p class="text-sm font-medium text-accent-700">Stack picker</p>
+    <h1 class="font-display font-semibold text-3xl md:text-4xl tracking-tight text-ink-900 mt-2">Pick your stack</h1>
+    <p class="mt-3 text-ink-600 max-w-prose-wide">
+      Your selection saves to your browser only. Detection-rule pages will
+      indicate whether each rule is applicable on your stack; runbooks will
+      surface stack-relevant compensating controls.
+    </p>
+    <div class="mt-10">
+      <StackSelector client:only="react" stacks={stacks} />
+    </div>
+
+    <section class="mt-16">
+      <h2 class="font-display font-semibold text-2xl text-ink-900 tracking-tight">Coverage matrix</h2>
+      <p class="mt-2 text-sm text-ink-600">Rules not possible on a given stack with compensating controls noted on the stack page.</p>
+
+      <div class="mt-6 overflow-x-auto card p-0">
+        <table class="min-w-full text-sm">
+          <thead class="bg-ink-50 text-xs font-semibold uppercase tracking-wide text-ink-500">
+            <tr>
+              <th class="px-4 py-3 text-left">Stack</th>
+              <th class="px-4 py-3 text-left"># platforms covered</th>
+              <th class="px-4 py-3 text-left">Things to know</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-ink-100">
+            {stacks.map((s) => (
+              <tr>
+                <td class="px-4 py-3 font-medium text-ink-900">{s.name}</td>
+                <td class="px-4 py-3 text-ink-700">{s.short}</td>
+                <td class="px-4 py-3 text-ink-700">{s.description}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+</BaseLayout>

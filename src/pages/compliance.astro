@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Compliance Crosswalk — Shadow AI Defense"
+  description="How Shadow AI detections and runbooks satisfy NIST AI RMF, ISO/IEC 42001, EU AI Act employer obligations, and NIST CSF."
+>
+  <section class="max-w-3xl mx-auto px-6 lg:px-8 py-12">
+    <p class="text-sm font-medium text-accent-700">Compliance</p>
+    <h1 class="font-display font-semibold text-3xl md:text-4xl tracking-tight text-ink-900 mt-2">Compliance crosswalk</h1>
+
+    <div class="prose prose-lg max-w-prose-wide mt-8">
+      <table>
+        <thead><tr><th>Framework</th><th>Requirement</th><th>Where it's satisfied</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>EU AI Act</td>
+            <td>Article 4 — AI literacy obligations for deployers</td>
+            <td>AUP + employee training; AI Acceptable Use Policy starter</td>
+          </tr>
+          <tr>
+            <td>NIST AI RMF</td>
+            <td>GOVERN-4.1 — accountability for AI risk; MANAGE-4.1 — monitoring</td>
+            <td>Runbooks RB-001 to RB-004; quarterly Shadow AI metrics</td>
+          </tr>
+          <tr>
+            <td>ISO/IEC 42001</td>
+            <td>8.2 / 8.4 — operational planning and control; performance monitoring</td>
+            <td>Detection library DET-* + runbooks RB-*</td>
+          </tr>
+          <tr>
+            <td>NIST CSF</td>
+            <td>DE.CM-3 — monitoring of personnel activity; DE.CM-7 — unauthorized resource detection</td>
+            <td>DET-MS-SEN-001 to -005; DET-MS-MCAS-001; DET-MS-MDE-001</td>
+          </tr>
+          <tr>
+            <td>OSFI B-13 (Canada banking)</td>
+            <td>Technology and Cyber Risk Management — third-party AI use governance</td>
+            <td>AI Inventory + Shadow AI Policy + monitoring</td>
+          </tr>
+          <tr>
+            <td>NYDFS Part 500 (US)</td>
+            <td>§500.13 — data retention and use limitations</td>
+            <td>DLP rules + retention policy; AI-CTRL-013 reference</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>How auditors use this</h2>
+      <p>
+        An auditor assessing the Shadow AI program asks for: charter, AUP, sanctioned-tool list with last-updated date, detection rule inventory with deployment evidence, sample alerts and runbook execution, comms log of approved-tool launches, and quarterly metrics. Every artifact in this repo's library corresponds to one of those.
+      </p>
+
+      <h2>Audit evidence pack</h2>
+      <p>For each in-scope quarter, assemble:</p>
+      <ol>
+        <li>Current AUP (signed, dated).</li>
+        <li>Sanctioned-tool list (from your AI Inventory).</li>
+        <li>Detection rule inventory: ID, platform, last tuned, status (active / audit / disabled).</li>
+        <li>Sample DET-MS-SEN-001 alerts (or platform equivalent) with linked RB-001 execution.</li>
+        <li>Sample DET-MS-PV-001 alerts (or platform equivalent) with linked RB-002 execution.</li>
+        <li>Quarterly metrics: detection volume, time-to-respond, repeat rate, conversion-to-approved-pilot rate.</li>
+        <li>Approved-tool launch communications log.</li>
+      </ol>
+      <p>This pack maps to AI Controls Catalog control AI-CTRL-020 (Shadow AI Detection) Test of Operating Effectiveness.</p>
+    </div>
+  </section>
+</BaseLayout>

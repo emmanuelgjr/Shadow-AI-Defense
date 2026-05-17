@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Contribute — Shadow AI Defense"
+  description="Especially valued: detection engineers submitting battle-tested rules with reported false-positive rates."
+>
+  <section class="max-w-3xl mx-auto px-6 lg:px-8 py-12">
+    <p class="text-sm font-medium text-accent-700">Contribute</p>
+    <h1 class="font-display font-semibold text-3xl md:text-4xl tracking-tight text-ink-900 mt-2">Contribute a detection</h1>
+
+    <div class="prose prose-lg max-w-prose-wide mt-8">
+      <p>Especially valued: detection engineers submitting battle-tested rules with reported false-positive rates from production.</p>
+
+      <h2>Quality bar</h2>
+      <ul>
+        <li>Rules must be tested in a production environment for ≥ 30 days.</li>
+        <li>Submission must include reported false-positive rate (% of triggers that were genuine).</li>
+        <li>Required tuning steps must be documented.</li>
+        <li>Required data sources must be enumerated.</li>
+        <li>Author attribution is permanent.</li>
+        <li>No vendor-supplied marketing rules.</li>
+      </ul>
+
+      <h2>How to submit</h2>
+      <p>Open a PR at <a href="https://github.com/emmanuelgjr/Shadow-AI-Defense">github.com/emmanuelgjr/Shadow-AI-Defense</a>.</p>
+    </div>
+  </section>
+</BaseLayout>

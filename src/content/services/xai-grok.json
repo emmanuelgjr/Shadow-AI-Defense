@@ -1,0 +1,21 @@
+{
+  "slug": "xai-grok",
+  "name": "Grok",
+  "vendor": "xAI",
+  "category": "Conversational AI",
+  "enterprise_offering": false,
+  "network_signatures": {
+    "domains": ["grok.com", "x.ai"],
+    "api_endpoints": ["api.x.ai"],
+    "sni_patterns": ["*.x.ai", "*.grok.com"]
+  },
+  "client_signatures": {},
+  "data_egress_concerns": ["Prompts via X social-platform integration", "Documents shared with Grok"],
+  "training_use_default": "Generally used for model improvement per public terms; review xAI's current privacy terms for opt-out mechanics.",
+  "enterprise_dpa_available": false,
+  "risk_profile": { "data_exfiltration": 4, "ip_loss": 4, "output_quality": 3, "integration_risk": 3 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Block",
+  "references": [{ "title": "xAI Privacy Policy", "url": "https://x.ai/legal/privacy-policy" }],
+  "last_reviewed": "2026-05-01"
+}

@@ -1,0 +1,39 @@
+{
+  "id": "DET-MS-MCAS-001",
+  "name": "Defender for Cloud Apps — Shadow AI discovery policy",
+  "description": "Cloud-app discovery policy in Defender for Cloud Apps configured to surface AI services from firewall/proxy logs and flag unsanctioned use.",
+  "platform": "Defender for Cloud Apps",
+  "detection_type": "Application Connector",
+  "rule_language": "config",
+  "rule_query": "# Defender for Cloud Apps — Cloud Discovery policy\n# Name: Shadow AI Discovery\n# Trigger: Application is in category 'Generative AI' AND is not sanctioned\n#\n# Conditions:\n#   - App category in (Generative AI, AI Code Generation, AI Productivity)\n#   - App sanction status != Sanctioned\n#   - Traffic > 10 MB OR users >= 5 in 7-day window\n#\n# Actions:\n#   - Alert: medium severity\n#   - Auto-tag app as 'Shadow AI'\n#   - Generate ticket in AI Governance triage queue\n#\n# Additional configuration:\n#   - Continuous discovery from firewall/proxy logs (Cisco, Palo Alto, Fortinet, Zscaler, etc.)\n#   - Tagging rule: all apps in Generative AI category default to 'Monitored' until reviewed\n#   - Block via Conditional Access App Control for any app tagged 'Block'",
+  "rule_explanation": "Defender for Cloud Apps catalogs thousands of SaaS applications including generative AI. The discovery feature ingests firewall/proxy logs and matches against the catalog. Continuous discovery + sanctioning workflow is the central pivot for Shadow AI program operation.",
+  "required_data_sources": [
+    "Defender for Cloud Apps licensed (MCAS / standalone)",
+    "Firewall / proxy / SWG logs ingested (Cisco ASA, Palo Alto, Fortinet, Zscaler, Netskope, etc.)",
+    "Or Defender for Endpoint as discovery source"
+  ],
+  "prerequisites": [
+    "Microsoft 365 E5 or Defender for Cloud Apps standalone",
+    "Log ingestion configured (continuous from log collector, or scheduled upload)"
+  ],
+  "expected_volume": "After initial discovery sweep: 20–80 new AI apps catalogued in first week. Steady-state: 1–5 new apps per week.",
+  "false_positive_guidance": "Microsoft's app catalog occasionally mis-categorizes apps. Validate before sanctioning/blocking.",
+  "tuning_steps": [
+    "Sanction-review every Generative AI app within 30 days of first discovery.",
+    "Sync sanction status weekly with the AI Inventory in the Governance Toolkit.",
+    "Use Conditional Access App Control to block specific apps (vs. domain-level blocking) for granular control."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "microsoft-copilot-consumer", "perplexity", "deepseek", "qwen", "midjourney", "otter-ai"],
+  "severity": "Medium",
+  "recommended_response": "RB-003",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-4.1"],
+    "iso_iec_42001": ["8.2", "8.4"],
+    "nist_csf": ["DE.CM-7", "ID.AM-2"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-001", "AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-01",
+  "last_reviewed": "2026-05-01",
+  "references": [{ "title": "Defender for Cloud Apps — Cloud Discovery", "url": "https://learn.microsoft.com/defender-cloud-apps/set-up-cloud-discovery" }]
+}

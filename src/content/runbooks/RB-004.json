@@ -1,0 +1,46 @@
+{
+  "id": "RB-004",
+  "title": "Unauthorized AI browser extension or OAuth grant",
+  "trigger": "DET-MS-MDE-001 detects a high-risk AI browser extension on a managed endpoint, OR DET-MS-MCAS-002 detects an OAuth grant to an AI app over Microsoft Entra ID with sensitive permissions.",
+  "severity": "High",
+  "applies_to": ["DET-MS-MDE-001", "DET-MS-MCAS-002"],
+  "response_phases": {
+    "immediate": [
+      { "step": 1, "owner": "L1 SOC analyst", "action": "Confirm extension ID / app ID against the service catalog. For OAuth grants, capture granted permissions and the user who consented." },
+      { "step": 2, "owner": "L2 SOC analyst", "action": "For OAuth grants with broad permissions (Mail.ReadWrite, Files.ReadWrite.All, admin-consent): pause the app in Defender for Cloud Apps; revoke consent in Entra ID." },
+      { "step": 3, "owner": "L2 SOC analyst", "action": "For extensions: trigger Chrome/Edge Enterprise force-uninstall via policy if not already auto-enforced. Confirm uninstall in subsequent telemetry." }
+    ],
+    "short_term": [
+      { "step": 4, "owner": "AI Governance triage", "action": "Notify user with comms/extension-warning or comms/oauth-warning. Provide approved-tool alternatives.", "expected_completion": "Within 5 business days" },
+      { "step": 5, "owner": "Security architecture", "action": "If the extension/app is broadly requested for legitimate work, evaluate enterprise version or alternative for sanctioning (RB-003 process)." }
+    ],
+    "long_term": [
+      { "step": 6, "owner": "Security architecture", "action": "Tighten preventive controls: tighten Chrome Enterprise extension allow-list; tighten Entra user-consent policy (admin-consent required for sensitive scopes)." },
+      { "step": 7, "owner": "AI Governance triage (quarterly)", "action": "Trend repeat rate and category mix. Adjust comms and policy accordingly." }
+    ]
+  },
+  "decision_tree": [
+    { "node": "Does the extension / OAuth app have access to sensitive data?", "yes": "Immediate revoke + user comms.", "no": "Comms only; allow until next review cycle." },
+    { "node": "Is there organic demand for the underlying capability?", "yes": "Evaluate sanctioned alternative via RB-003.", "no": "Maintain block and communicate." }
+  ],
+  "comms_templates": ["comms-extension-warning", "comms-oauth-warning", "comms-approved-tool-announcement"],
+  "policy_references": ["AUP § 7 — Browser extensions and OAuth grants"],
+  "raci": {
+    "responsible": "L1/L2 SOC analyst",
+    "accountable": "Security architecture lead",
+    "consulted": ["AI Governance triage", "User's direct manager"],
+    "informed": ["AI Governance Committee (aggregate quarterly)"]
+  },
+  "metrics_to_capture": [
+    "Time from detection to extension uninstall / OAuth revoke (target: ≤ 24 hours)",
+    "Number of OAuth grants per quarter by sensitivity tier",
+    "Extension reinstallation rate after uninstall (signal of unmet need)"
+  ],
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-2.2"],
+    "iso_iec_42001": ["8.2"],
+    "nist_csf": ["PR.AC-4", "DE.CM-7", "RS.MI-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-019", "AI-CTRL-020"],
+  "references": []
+}

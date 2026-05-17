@@ -1,0 +1,47 @@
+{
+  "id": "RB-003",
+  "title": "Mass adoption of unsanctioned AI tool (> 50 users)",
+  "trigger": "DET-MS-SEN-003 (or platform equivalent) fires for an unsanctioned AI service exceeding the program's user-count threshold. Also triggered by DET-MS-MCAS-001 / -MANUAL-001 surfacing a new viral app.",
+  "severity": "High",
+  "applies_to": ["DET-MS-SEN-003", "DET-MS-MCAS-001", "DET-MS-MCAS-MANUAL-001", "DET-MS-SEN-002"],
+  "response_phases": {
+    "immediate": [
+      { "step": 1, "owner": "AI Governance triage", "action": "Confirm the detection. Pull user / department breakdown. Identify what business need the tool is serving (often a productivity workflow not yet covered by sanctioned tools)." },
+      { "step": 2, "owner": "AI Governance lead", "action": "Convene rapid-review with Security and the affected business unit(s). Goal: decide within 5 business days whether to: (a) fast-track sanction, (b) block with comms, (c) interim pilot, or (d) parallel sanctioned alternative." }
+    ],
+    "short_term": [
+      { "step": 3, "owner": "AI Governance triage", "action": "Execute the decision: update sanction status in Defender for Cloud Apps / SWG; update inventory in Governance Toolkit; issue org-wide comms (comms/department-level-briefing).", "expected_completion": "Within 10 business days" },
+      { "step": 4, "owner": "Procurement + Legal", "action": "If sanctioning: initiate vendor due diligence using the Vendor Questionnaire (AI Governance Toolkit). Capture risk-tier decision before contract finalization.", "expected_completion": "Within 30 days" },
+      { "step": 5, "owner": "AI Governance triage", "action": "Stand up an approved-tool pilot for the underlying need (if no sanctioned alternative exists). Migrate users from unsanctioned to sanctioned path." }
+    ],
+    "long_term": [
+      { "step": 6, "owner": "AI Governance Committee", "action": "Post-mortem: how did this become viral without earlier detection? Adjust monitoring thresholds / sanctioning cadence accordingly." },
+      { "step": 7, "owner": "AI Governance triage (quarterly)", "action": "Track migration completion. Goal: < 10% of original user base still on unsanctioned tool 90 days post-decision." }
+    ]
+  },
+  "decision_tree": [
+    { "node": "Does the tool serve a genuine business need not currently covered?", "yes": "Fast-track sanction or stand up approved alternative.", "no": "Block with comms; redirect to existing sanctioned tools." },
+    { "node": "Is there an enterprise-tier offering with acceptable data terms?", "yes": "Sanction the enterprise tier; communicate migration path.", "no": "Block consumer use; consider whether to pursue a custom contract or alternative vendor." }
+  ],
+  "comms_templates": ["comms-department-level-briefing", "comms-approved-tool-announcement", "comms-mass-adoption-program-update"],
+  "policy_references": ["AUP § 4 — Sanctioned tools list", "AUP § 6 — Exception process"],
+  "raci": {
+    "responsible": "AI Governance triage lead",
+    "accountable": "AI Governance lead",
+    "consulted": ["Affected business unit head", "Procurement", "Legal", "Security architecture"],
+    "informed": ["AI Governance Committee", "CISO"]
+  },
+  "metrics_to_capture": [
+    "Time from detection to decision (target: ≤ 5 business days)",
+    "Time from decision to action (target: ≤ 10 business days)",
+    "User migration rate at 30 / 60 / 90 days",
+    "Number of fast-tracked sanctions per quarter (trend signal — high rate may indicate program-level coverage gaps)"
+  ],
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-2.2", "MANAGE-4.1"],
+    "iso_iec_42001": ["8.2", "8.4", "10.2"],
+    "nist_csf": ["DE.AE-2", "RS.AN-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-001", "AI-CTRL-004", "AI-CTRL-016", "AI-CTRL-020"],
+  "references": []
+}

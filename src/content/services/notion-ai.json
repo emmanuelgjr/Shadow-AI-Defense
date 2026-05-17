@@ -1,0 +1,24 @@
+{
+  "slug": "notion-ai",
+  "name": "Notion AI",
+  "vendor": "Notion Labs",
+  "category": "Productivity",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Notion AI Enterprise add-on",
+  "network_signatures": {
+    "domains": ["notion.so", "www.notion.so"],
+    "api_endpoints": ["api.notion.com"],
+    "sni_patterns": ["*.notion.so", "*.notion.com"]
+  },
+  "client_signatures": {
+    "process_names": ["Notion.app (macOS)", "Notion.exe (Windows)"]
+  },
+  "data_egress_concerns": ["Workspace document content sent to AI back-end", "Customer notes", "Internal strategy documents"],
+  "training_use_default": "Enterprise plan contractually excludes content from training. Lower tiers should be reviewed for opt-out scope.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 4, "ip_loss": 4, "output_quality": 2, "integration_risk": 2 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [{ "title": "Notion AI Privacy", "url": "https://www.notion.so/help/notion-ai-faqs" }],
+  "last_reviewed": "2026-05-01"
+}
