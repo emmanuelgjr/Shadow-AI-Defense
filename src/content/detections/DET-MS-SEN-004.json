@@ -7,20 +7,47 @@
   "rule_language": "KQL",
   "rule_query": "// API-endpoint connections from non-developer environments\nlet apiEndpoints = dynamic([\n  'api.openai.com', 'api.anthropic.com', 'generativelanguage.googleapis.com',\n  'api.mistral.ai', 'api.x.ai', 'api.deepseek.com', 'dashscope.aliyuncs.com'\n]);\nDeviceNetworkEvents\n| where Timestamp > ago(24h)\n| where ActionType == 'ConnectionSuccess'\n| extend Domain = tostring(parse_url(RemoteUrl).Host)\n| where Domain in (apiEndpoints)\n| join kind=leftouter (DeviceInfo | summarize arg_max(Timestamp, *) by DeviceName) on DeviceName\n| where MachineGroup !in ('Developer Workstations', 'AI Engineering')\n| summarize Connections = count(), FirstSeen = min(Timestamp)\n          by Domain, InitiatingProcessAccountUpn, DeviceName, MachineGroup",
   "rule_explanation": "API-endpoint traffic from non-developer machines typically signals script-based or agent-based use without sanctioned governance.",
-  "required_data_sources": ["Defender for Endpoint (DeviceNetworkEvents, DeviceInfo)"],
-  "prerequisites": ["Defender for Endpoint P2 or M365 E5", "Device groups tagged with MachineGroup metadata"],
+  "required_data_sources": [
+    "Defender for Endpoint (DeviceNetworkEvents, DeviceInfo)"
+  ],
+  "prerequisites": [
+    "Defender for Endpoint P2 or M365 E5",
+    "Device groups tagged with MachineGroup metadata"
+  ],
   "expected_volume": "Low — most knowledge workers do not call LLM APIs directly.",
   "false_positive_guidance": "Some Office add-ins call LLM APIs natively; tag them as sanctioned MachineGroups or processes.",
-  "tuning_steps": ["Maintain MachineGroup tags accurately.", "Tune apiEndpoints list quarterly."],
-  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "mistral-le-chat", "xai-grok", "deepseek", "qwen"],
+  "tuning_steps": [
+    "Maintain MachineGroup tags accurately.",
+    "Tune apiEndpoints list quarterly."
+  ],
+  "detects_services": [
+    "openai-chatgpt",
+    "anthropic-claude",
+    "google-gemini",
+    "mistral-le-chat",
+    "xai-grok",
+    "deepseek",
+    "qwen"
+  ],
   "severity": "Medium",
-  "recommended_response": "RB-005",
+  "recommended_response": "RB-001",
   "framework_mappings": {
-    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7"],
-    "iso_iec_42001": ["8.2", "8.3"],
-    "mitre_attack": ["T1567"]
+    "nist_ai_rmf": [
+      "GOVERN-4.1",
+      "MEASURE-2.7"
+    ],
+    "iso_iec_42001": [
+      "8.2",
+      "8.3"
+    ],
+    "mitre_attack": [
+      "T1567"
+    ]
   },
-  "ai_controls_catalog_refs": ["AI-CTRL-020", "AI-CTRL-019"],
+  "ai_controls_catalog_refs": [
+    "AI-CTRL-020",
+    "AI-CTRL-019"
+  ],
   "author": "Emmanuel Guilherme Jr.",
   "created": "2026-05-01",
   "last_reviewed": "2026-05-01",

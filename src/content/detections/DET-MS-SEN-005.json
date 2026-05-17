@@ -7,20 +7,43 @@
   "rule_language": "KQL",
   "rule_query": "// Outbound transfer sizes consistent with code or document exfil\nlet llmDomains = _GetWatchlist('ConsumerLLMDomains') | project SearchKey;\nDeviceNetworkEvents\n| where Timestamp > ago(24h)\n| where ActionType == 'ConnectionSuccess'\n| extend Domain = tostring(parse_url(RemoteUrl).Host)\n| where Domain in (llmDomains)\n| summarize TotalBytes = sum(BytesSent), Connections = count()\n          by Domain, InitiatingProcessAccountUpn\n| where TotalBytes > 1_000_000  // > 1 MB outbound to one user/domain in 24h\n| order by TotalBytes desc",
   "rule_explanation": "Heuristic for code or document exfil — typical chat traffic is much smaller. Tune the threshold to your environment; even small projects can exceed default chat conversation sizes.",
-  "required_data_sources": ["Defender for Endpoint (DeviceNetworkEvents) with BytesSent enrichment"],
-  "prerequisites": ["BytesSent values populated (this varies by deployment; check before relying)"],
+  "required_data_sources": [
+    "Defender for Endpoint (DeviceNetworkEvents) with BytesSent enrichment"
+  ],
+  "prerequisites": [
+    "BytesSent values populated (this varies by deployment; check before relying)"
+  ],
   "expected_volume": "Low — most users do not exceed 1 MB upload to chat services in 24h.",
   "false_positive_guidance": "Users uploading large reference documents legitimately will trip this. Triage rather than block.",
-  "tuning_steps": ["Tune the 1 MB threshold against your environment baseline.", "Exclude sanctioned domains."],
-  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity"],
+  "tuning_steps": [
+    "Tune the 1 MB threshold against your environment baseline.",
+    "Exclude sanctioned domains."
+  ],
+  "detects_services": [
+    "openai-chatgpt",
+    "anthropic-claude",
+    "google-gemini",
+    "perplexity"
+  ],
   "severity": "High",
-  "recommended_response": "RB-006",
+  "recommended_response": "RB-002",
   "framework_mappings": {
-    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7"],
-    "iso_iec_42001": ["8.3"],
-    "mitre_attack": ["T1041", "T1567"]
+    "nist_ai_rmf": [
+      "GOVERN-4.1",
+      "MEASURE-2.7"
+    ],
+    "iso_iec_42001": [
+      "8.3"
+    ],
+    "mitre_attack": [
+      "T1041",
+      "T1567"
+    ]
   },
-  "ai_controls_catalog_refs": ["AI-CTRL-020", "AI-CTRL-013"],
+  "ai_controls_catalog_refs": [
+    "AI-CTRL-020",
+    "AI-CTRL-013"
+  ],
   "author": "Emmanuel Guilherme Jr.",
   "created": "2026-05-01",
   "last_reviewed": "2026-05-01",

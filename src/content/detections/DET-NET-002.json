@@ -7,8 +7,13 @@
   "rule_language": "config",
   "rule_query": "# Generic next-gen firewall policy\n#\n# Policy: Block outbound HTTPS to LLM API endpoints from non-developer subnets\n#\n# Match:\n#   - Destination FQDN/SNI ∈ {api.openai.com, api.anthropic.com,\n#                              generativelanguage.googleapis.com, api.mistral.ai,\n#                              api.x.ai, api.deepseek.com, dashscope.aliyuncs.com}\n#   - Source: ANY EXCEPT (DEVELOPER_SUBNETS, AI_ENGINEERING_SUBNETS, sanctioned API gateways)\n#\n# Action: Block, log full record\n#\n# Logging:\n#   - Forwarded to SIEM for correlation with sanctioned-use tracking\n#\n# Allow-list: maintained as a network group object referencing approved pipelines",
   "rule_explanation": "Splits API access from chat access — most knowledge workers do not need API access; developers and AI engineering teams do. Restrict accordingly.",
-  "required_data_sources": ["Any next-gen firewall with FQDN/SNI matching"],
-  "prerequisites": ["Identity-aware or subnet-segmented network", "Developer/AI engineering subnets identifiable"],
+  "required_data_sources": [
+    "Any next-gen firewall with FQDN/SNI matching"
+  ],
+  "prerequisites": [
+    "Identity-aware or subnet-segmented network",
+    "Developer/AI engineering subnets identifiable"
+  ],
   "expected_volume": "Block events spike during first weeks of policy then drop as scripted use migrates to sanctioned paths.",
   "false_positive_guidance": "Some Office add-ins or vendor SaaS integrations call these APIs server-to-server (not from user endpoint). Those typically come from vendor IP space, not user subnet.",
   "tuning_steps": [
@@ -16,15 +21,35 @@
     "Maintain sanctioned-egress allow-list with change control.",
     "Pair with API gateway logging for sanctioned flows."
   ],
-  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "mistral-le-chat", "xai-grok", "deepseek", "qwen"],
+  "detects_services": [
+    "openai-chatgpt",
+    "anthropic-claude",
+    "google-gemini",
+    "mistral-le-chat",
+    "xai-grok",
+    "deepseek",
+    "qwen"
+  ],
   "severity": "Medium",
-  "recommended_response": "RB-005",
+  "recommended_response": "RB-001",
   "framework_mappings": {
-    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-2.2"],
-    "iso_iec_42001": ["8.2", "8.3"],
-    "nist_csf": ["PR.AC-3", "PR.AC-5"]
+    "nist_ai_rmf": [
+      "GOVERN-4.1",
+      "MANAGE-2.2"
+    ],
+    "iso_iec_42001": [
+      "8.2",
+      "8.3"
+    ],
+    "nist_csf": [
+      "PR.AC-3",
+      "PR.AC-5"
+    ]
   },
-  "ai_controls_catalog_refs": ["AI-CTRL-020", "AI-CTRL-019"],
+  "ai_controls_catalog_refs": [
+    "AI-CTRL-020",
+    "AI-CTRL-019"
+  ],
   "author": "Emmanuel Guilherme Jr.",
   "created": "2026-05-01",
   "last_reviewed": "2026-05-01",
