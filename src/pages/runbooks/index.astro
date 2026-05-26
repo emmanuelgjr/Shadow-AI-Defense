@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
+const base = import.meta.env.BASE_URL;
 const runbooks = (await getCollection('runbooks')).map((r) => r.data);
 ---
 
@@ -23,7 +24,7 @@ const runbooks = (await getCollection('runbooks')).map((r) => r.data);
     <ol class="grid sm:grid-cols-2 gap-4 mt-10">
       {runbooks.map((r) => (
         <li>
-          <a href={`/runbooks/${r.id}`} class="card-interactive block h-full">
+          <a href={`${base}runbooks/${r.id}`} class="card-interactive block h-full">
             <div class="flex items-center justify-between gap-2 mb-1">
               <p class="font-mono text-xs text-ink-500">{r.id}</p>
               <span class={`badge ${r.severity === 'High' ? 'bg-risk-50 text-risk-700' : r.severity === 'Medium' ? 'bg-warn-50 text-warn-700' : 'bg-info-50 text-info-700'}`}>{r.severity}</span>

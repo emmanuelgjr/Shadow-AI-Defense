@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
 
 const comms = [
   { id: 'comms-all-employee-announcement', name: 'All-employee announcement: AI program launch', tag: 'v0.1' },
@@ -35,7 +36,7 @@ const comms = [
             <p class="text-xs text-ink-500 mt-0.5 font-mono">{c.id}</p>
           </div>
           {c.tag === 'v0.1' ? (
-            <a href={`/templates/${c.id}.docx`} download class="btn btn-primary btn-sm">Download</a>
+            <a href={`${base}templates/${c.id}.docx`} download class="btn btn-primary btn-sm">Download</a>
           ) : (
             <span class="badge-neutral">ships {c.tag}</span>
           )}

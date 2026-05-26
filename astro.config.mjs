@@ -5,7 +5,8 @@ import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 
 export default defineConfig({
-  site: 'https://shadowaidefense.dev',
+  site: 'https://emmanuelgjr.github.io',
+  base: '/Shadow-AI-Defense/',
   output: 'static',
   integrations: [tailwind({ applyBaseStyles: false }), react(), sitemap(), mdx()],
   markdown: { shikiConfig: { theme: 'github-dark-dimmed' } },

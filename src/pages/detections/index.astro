@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
+const base = import.meta.env.BASE_URL;
 const detections = (await getCollection('detections')).map((d) => d.data);
 const platforms = Array.from(new Set(detections.map((d) => d.platform))).sort();
 
@@ -23,7 +24,7 @@ const sevClass = (s: string) =>
     </h1>
     <p class="mt-3 text-ink-600 max-w-prose-wide">
       {detections.length} detection rules across {platforms.length} platforms.
-      Pick your stack at <a href="/stack" class="text-accent-700 hover:underline">/stack</a> to filter the list to what's possible on your environment.
+      Pick your stack at <a href={`${base}stack`} class="text-accent-700 hover:underline">/stack</a> to filter the list to what's possible on your environment.
     </p>
 
     {platforms.map((p) => (
@@ -32,7 +33,7 @@ const sevClass = (s: string) =>
         <ul class="grid lg:grid-cols-2 gap-4 mt-4">
           {detections.filter((d) => d.platform === p).map((d) => (
             <li>
-              <a href={`/detections/${d.id}`} class="card-interactive block h-full">
+              <a href={`${base}detections/${d.id}`} class="card-interactive block h-full">
                 <div class="flex items-start justify-between gap-2">
                   <p class="font-mono text-xs text-ink-500">{d.id}</p>
                   <span class={`badge ${sevClass(d.severity)}`}>{d.severity}</span>

@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
+const base = import.meta.env.BASE_URL;
 const services = (await getCollection('services')).map((s) => s.data);
 const groups = Array.from(new Set(services.map((s) => s.category))).sort();
 
@@ -33,7 +34,7 @@ const tierColor = (t: string) =>
         <ul class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
           {services.filter((s) => s.category === g).map((s) => (
             <li>
-              <a href={`/services/${s.slug}`} class="card-interactive block h-full">
+              <a href={`${base}services/${s.slug}`} class="card-interactive block h-full">
                 <div class="flex items-start justify-between gap-2 mb-1">
                   <h3 class="font-semibold text-ink-900">{s.name}</h3>
                   <span class={`badge ${tierColor(s.recommended_response)}`}>{s.recommended_response}</span>

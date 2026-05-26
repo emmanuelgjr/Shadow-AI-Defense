@@ -8,6 +8,7 @@ export async function getStaticPaths() {
   return detections.map((d) => ({ params: { id: d.data.id }, props: { detection: d.data } }));
 }
 const { detection } = Astro.props;
+const base = import.meta.env.BASE_URL;
 
 const langMap: Record<string, string> = {
   KQL: 'kusto',
@@ -30,7 +31,7 @@ const fm = detection.framework_mappings;
   ogType="article"
 >
   <article class="max-w-content mx-auto px-6 lg:px-8 py-12">
-    <a href="/detections" class="text-sm text-ink-500 hover:text-accent-700">← All detections</a>
+    <a href={`${base}detections`} class="text-sm text-ink-500 hover:text-accent-700">← All detections</a>
 
     <header class="border-b border-ink-200 pb-8 mt-3 mb-8">
       <div class="flex flex-wrap items-center gap-2 mb-2">
@@ -110,7 +111,7 @@ const fm = detection.framework_mappings;
           ) : (
             <ul class="space-y-1 text-sm">
               {detection.detects_services.map((s) => (
-                <li><a href={`/services/${s}`} class="text-accent-700 hover:underline">{s}</a></li>
+                <li><a href={`${base}services/${s}`} class="text-accent-700 hover:underline">{s}</a></li>
               ))}
             </ul>
           )}
@@ -118,7 +119,7 @@ const fm = detection.framework_mappings;
         {detection.recommended_response && (
           <div class="card">
             <h3 class="text-sm font-semibold text-ink-900 mb-2">Response runbook</h3>
-            <a href={`/runbooks/${detection.recommended_response}`} class="text-accent-700 hover:underline font-mono text-sm">{detection.recommended_response}</a>
+            <a href={`${base}runbooks/${detection.recommended_response}`} class="text-accent-700 hover:underline font-mono text-sm">{detection.recommended_response}</a>
           </div>
         )}
         <div class="card">

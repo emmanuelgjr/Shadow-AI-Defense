@@ -5,7 +5,7 @@ export default function StackBadge() {
   if (!stack) {
     return (
       <a
-        href="/stack"
+        href={`${import.meta.env.BASE_URL}stack`}
         className="badge-accent hover:bg-accent-100 transition-colors"
       >
         Pick your stack →
@@ -13,7 +13,7 @@ export default function StackBadge() {
     );
   }
   return (
-    <a href="/stack" className="badge-accent hover:bg-accent-100 transition-colors">
+    <a href={`${import.meta.env.BASE_URL}stack`} className="badge-accent hover:bg-accent-100 transition-colors">
       Stack: {stack} · change
     </a>
   );
