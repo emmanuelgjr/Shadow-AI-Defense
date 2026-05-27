@@ -1,0 +1,34 @@
+{
+  "slug": "stability-ai",
+  "name": "Stable Diffusion (DreamStudio)",
+  "vendor": "Stability AI",
+  "category": "Image Gen",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Stability AI Enterprise API",
+  "network_signatures": {
+    "domains": ["stability.ai", "dreamstudio.ai", "platform.stability.ai"],
+    "api_endpoints": ["api.stability.ai"],
+    "cdn_domains": ["cdn.stability.ai"],
+    "sni_patterns": ["*.stability.ai", "*.dreamstudio.ai"]
+  },
+  "client_signatures": {
+    "user_agents": ["StabilityAI-SDK/*"],
+    "process_names": ["DreamStudio.exe (Windows)"]
+  },
+  "data_egress_concerns": [
+    "Text prompts may contain confidential product descriptions or internal terminology",
+    "Reference images uploaded for img2img may contain proprietary designs or PII",
+    "Negative prompts could reveal internal brand or compliance language",
+    "Generated images may inadvertently replicate copyrighted or trademarked visual elements"
+  ],
+  "training_use_default": "Free-tier generated images and prompts may be used for service improvement. Enterprise API customers can negotiate data exclusion via custom agreements. Review current Stability AI terms for opt-out mechanics.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 3, "ip_loss": 3, "output_quality": 3, "integration_risk": 3 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Conditional",
+  "references": [
+    { "title": "Stability AI Terms of Service", "url": "https://stability.ai/terms-of-use" },
+    { "title": "Stability AI Enterprise", "url": "https://stability.ai/enterprise" }
+  ],
+  "last_reviewed": "2026-05-26"
+}

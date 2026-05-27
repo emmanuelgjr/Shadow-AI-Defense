@@ -1,0 +1,32 @@
+{
+  "slug": "writesonic",
+  "name": "Writesonic",
+  "vendor": "Writesonic",
+  "category": "Productivity",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Writesonic Enterprise",
+  "network_signatures": {
+    "domains": ["writesonic.com", "app.writesonic.com"],
+    "api_endpoints": ["api.writesonic.com"],
+    "sni_patterns": ["*.writesonic.com"]
+  },
+  "client_signatures": {
+    "browser_extensions": [{ "name": "Writesonic Chrome Extension", "id_chrome": "lljhfehdhpmmeieapdmnkbljbfcmpjga", "risk": "elevated" }]
+  },
+  "data_egress_concerns": [
+    "SEO keyword strategies and content calendars pasted into the tool reveal competitive positioning",
+    "Blog and article drafts containing internal data, customer references, or financial projections",
+    "Product landing page copy that reveals unreleased features or pricing strategies",
+    "Brand voice training data uploaded to customize outputs may contain proprietary guidelines"
+  ],
+  "training_use_default": "Enterprise plan data is excluded from model training per vendor documentation. Free and lower tiers should be assumed to contribute data for service improvement unless confirmed otherwise.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 3, "ip_loss": 3, "output_quality": 2, "integration_risk": 2 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001", "DET-MS-PV-001"],
+  "recommended_response": "Allow with DLP",
+  "references": [
+    { "title": "Writesonic Terms of Service", "url": "https://writesonic.com/terms" },
+    { "title": "Writesonic Privacy Policy", "url": "https://writesonic.com/privacy" }
+  ],
+  "last_reviewed": "2026-05-26"
+}

@@ -1,0 +1,30 @@
+{
+  "slug": "copy-ai",
+  "name": "Copy.ai",
+  "vendor": "Copy.ai",
+  "category": "Productivity",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Copy.ai Enterprise",
+  "network_signatures": {
+    "domains": ["copy.ai", "app.copy.ai"],
+    "api_endpoints": ["api.copy.ai"],
+    "sni_patterns": ["*.copy.ai"]
+  },
+  "client_signatures": {},
+  "data_egress_concerns": [
+    "Sales email drafts containing customer names, deal sizes, and internal pricing",
+    "Marketing copy inputs that reveal product roadmaps or unreleased feature details",
+    "Internal workflow prompts that describe business processes or proprietary methodologies",
+    "Customer case study data pasted for content generation"
+  ],
+  "training_use_default": "Copy.ai states that Enterprise plan data is not used for model training. Free and lower-tier data handling should be reviewed in current terms. Confirm opt-out mechanisms for non-enterprise tiers.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 3, "ip_loss": 3, "output_quality": 2, "integration_risk": 2 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001", "DET-MS-PV-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [
+    { "title": "Copy.ai Security & Trust", "url": "https://www.copy.ai/security" },
+    { "title": "Copy.ai Terms of Service", "url": "https://www.copy.ai/terms" }
+  ],
+  "last_reviewed": "2026-05-26"
+}

@@ -1,0 +1,34 @@
+{
+  "slug": "suno-ai",
+  "name": "Suno AI",
+  "vendor": "Suno",
+  "category": "Specialized",
+  "enterprise_offering": false,
+  "network_signatures": {
+    "domains": ["suno.com", "app.suno.ai", "suno.ai"],
+    "api_endpoints": ["api.suno.ai"],
+    "cdn_domains": ["cdn1.suno.ai"],
+    "sni_patterns": ["*.suno.ai", "*.suno.com"]
+  },
+  "client_signatures": {
+    "mobile_apps": [
+      { "name": "Suno iOS", "bundle_id": "com.suno.app" }
+    ]
+  },
+  "data_egress_concerns": [
+    "Text prompts for lyrics or song descriptions may contain confidential marketing slogans or brand messaging",
+    "Audio uploads for style reference may include proprietary jingles or licensed music",
+    "Generated music used commercially without proper rights review creates IP and licensing risk",
+    "Service is consumer-oriented with limited controls for enterprise data governance"
+  ],
+  "training_use_default": "User-generated content and prompts may be used to improve the service and train models. No enterprise tier with training exclusion is currently available. All inputs should be treated as potentially used for model development.",
+  "enterprise_dpa_available": false,
+  "risk_profile": { "data_exfiltration": 2, "ip_loss": 3, "output_quality": 3, "integration_risk": 1 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Block",
+  "references": [
+    { "title": "Suno Terms of Service", "url": "https://suno.com/terms" },
+    { "title": "Suno Privacy Policy", "url": "https://suno.com/privacy" }
+  ],
+  "last_reviewed": "2026-05-26"
+}

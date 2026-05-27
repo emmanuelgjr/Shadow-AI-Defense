@@ -1,0 +1,35 @@
+{
+  "slug": "character-ai",
+  "name": "Character.AI",
+  "vendor": "Character Technologies",
+  "category": "Conversational AI",
+  "enterprise_offering": false,
+  "network_signatures": {
+    "domains": ["character.ai", "beta.character.ai"],
+    "api_endpoints": ["neo.character.ai"],
+    "cdn_domains": ["characterai.io"],
+    "sni_patterns": ["*.character.ai", "*.characterai.io"]
+  },
+  "client_signatures": {
+    "mobile_apps": [
+      { "name": "Character.AI iOS", "bundle_id": "ai.character.app" },
+      { "name": "Character.AI Android", "package_id": "ai.character.app" }
+    ]
+  },
+  "data_egress_concerns": [
+    "Employees may paste confidential information into roleplay or brainstorming conversations",
+    "Character personas created for internal testing may reveal product details or strategic plans",
+    "Conversation history persists on vendor servers with limited deletion controls",
+    "Service primarily targets consumer use; no enterprise-grade data handling guarantees"
+  ],
+  "training_use_default": "Conversations are used to improve the service and train models by default. No enterprise tier with training exclusion is currently available. Users should assume all input is used for model development.",
+  "enterprise_dpa_available": false,
+  "risk_profile": { "data_exfiltration": 4, "ip_loss": 3, "output_quality": 2, "integration_risk": 1 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Block",
+  "references": [
+    { "title": "Character.AI Terms of Service", "url": "https://character.ai/tos" },
+    { "title": "Character.AI Privacy Policy", "url": "https://character.ai/privacy" }
+  ],
+  "last_reviewed": "2026-05-26"
+}

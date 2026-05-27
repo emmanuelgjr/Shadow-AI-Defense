@@ -1,0 +1,32 @@
+{
+  "slug": "jasper-ai",
+  "name": "Jasper AI",
+  "vendor": "Jasper AI",
+  "category": "Productivity",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Jasper Business / Jasper Enterprise",
+  "network_signatures": {
+    "domains": ["jasper.ai", "app.jasper.ai"],
+    "api_endpoints": ["api.jasper.ai"],
+    "sni_patterns": ["*.jasper.ai"]
+  },
+  "client_signatures": {
+    "browser_extensions": [{ "name": "Jasper Everywhere", "id_chrome": "iadjihogmhcomhkedafhkobfolilhkgp", "risk": "elevated" }]
+  },
+  "data_egress_concerns": [
+    "Marketing briefs and brand guidelines uploaded to generate content may contain competitive strategy",
+    "Product descriptions and pricing details pasted into prompts",
+    "Customer persona data and segmentation details shared for targeted content creation",
+    "Internal messaging frameworks and positioning documents"
+  ],
+  "training_use_default": "Jasper states it does not use customer inputs or outputs to train models. Enterprise plans include additional contractual commitments. Review current Jasper trust documentation for specifics.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 4, "ip_loss": 4, "output_quality": 2, "integration_risk": 2 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001", "DET-MS-PV-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [
+    { "title": "Jasper Trust Center", "url": "https://trust.jasper.ai/" },
+    { "title": "Jasper AI Terms of Service", "url": "https://www.jasper.ai/terms" }
+  ],
+  "last_reviewed": "2026-05-26"
+}

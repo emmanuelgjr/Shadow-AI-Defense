@@ -1,0 +1,36 @@
+{
+  "slug": "adobe-firefly",
+  "name": "Adobe Firefly",
+  "vendor": "Adobe",
+  "category": "Image Gen",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Adobe Firefly for Enterprise (Creative Cloud Enterprise)",
+  "network_signatures": {
+    "domains": ["firefly.adobe.com", "adobe.com"],
+    "api_endpoints": ["firefly-api.adobe.io", "cc-api-data.adobe.io"],
+    "cdn_domains": ["assets.adobedtm.com", "p13n.adobe.io"],
+    "sni_patterns": ["*.adobe.com", "*.adobe.io"]
+  },
+  "client_signatures": {
+    "process_names": ["Adobe Photoshop.exe (Windows)", "Adobe Illustrator.exe (Windows)", "Adobe Photoshop.app (macOS)", "Adobe Illustrator.app (macOS)"],
+    "desktop_apps": [
+      { "name": "Adobe Creative Cloud", "macOS_bundle": "com.adobe.acc", "windows_publisher": "Adobe Inc." }
+    ]
+  },
+  "data_egress_concerns": [
+    "Text prompts may describe confidential product designs, packaging concepts, or campaign visuals",
+    "Reference images uploaded for style matching may contain proprietary artwork or pre-release branding",
+    "Generative Fill and Expand features process portions of existing images through Adobe cloud services",
+    "Enterprise customers should verify that Firefly features in Creative Cloud apps route through their tenancy"
+  ],
+  "training_use_default": "Adobe states Firefly is trained exclusively on Adobe Stock licensed content and public-domain material. Customer content (prompts, uploads, generated outputs) is not used for training in Enterprise plans. Non-enterprise tiers should verify current opt-out status.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 3, "ip_loss": 3, "output_quality": 2, "integration_risk": 2 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [
+    { "title": "Adobe Firefly FAQ", "url": "https://www.adobe.com/products/firefly/faq.html" },
+    { "title": "Adobe Trust Center", "url": "https://www.adobe.com/trust.html" }
+  ],
+  "last_reviewed": "2026-05-26"
+}

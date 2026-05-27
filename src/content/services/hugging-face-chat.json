@@ -1,0 +1,33 @@
+{
+  "slug": "hugging-face-chat",
+  "name": "Hugging Face Chat",
+  "vendor": "Hugging Face",
+  "category": "Conversational AI",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Hugging Face Enterprise Hub",
+  "network_signatures": {
+    "domains": ["huggingface.co", "hf.co"],
+    "api_endpoints": ["api-inference.huggingface.co", "api.huggingface.co"],
+    "cdn_domains": ["cdn-lfs.huggingface.co", "cdn-lfs-us-1.huggingface.co"],
+    "sni_patterns": ["*.huggingface.co", "*.hf.co"]
+  },
+  "client_signatures": {
+    "user_agents": ["huggingface-hub/*", "transformers/*"]
+  },
+  "data_egress_concerns": [
+    "Prompts sent through the Inference API reach various open-source model endpoints with differing privacy guarantees",
+    "Model fine-tuning datasets uploaded to Hub may contain proprietary or sensitive training data",
+    "Spaces and repositories may inadvertently expose internal models, datasets, or API keys",
+    "Conversations through HuggingChat use open-source models but data may be logged for service improvement"
+  ],
+  "training_use_default": "HuggingChat conversations may be shared publicly and used for model improvement unless users opt out. Enterprise Hub provides private inference with contractual controls. Self-hosted inference avoids data egress entirely.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 3, "ip_loss": 4, "output_quality": 2, "integration_risk": 3 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Allow with DLP",
+  "references": [
+    { "title": "Hugging Face Privacy Policy", "url": "https://huggingface.co/privacy" },
+    { "title": "Hugging Face Terms of Service", "url": "https://huggingface.co/terms-of-service" }
+  ],
+  "last_reviewed": "2026-05-26"
+}

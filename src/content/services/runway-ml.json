@@ -1,0 +1,33 @@
+{
+  "slug": "runway-ml",
+  "name": "Runway ML",
+  "vendor": "Runway AI",
+  "category": "Specialized",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Runway Enterprise",
+  "network_signatures": {
+    "domains": ["runwayml.com", "app.runwayml.com"],
+    "api_endpoints": ["api.runwayml.com"],
+    "cdn_domains": ["cdn.runwayml.com"],
+    "sni_patterns": ["*.runwayml.com"]
+  },
+  "client_signatures": {
+    "process_names": ["RunwayML.app (macOS)", "RunwayML.exe (Windows)"]
+  },
+  "data_egress_concerns": [
+    "Video footage uploaded for editing or generation may contain confidential scenes or unreleased product visuals",
+    "Images used as generation seeds may contain proprietary designs or trademarked assets",
+    "Text prompts may describe internal projects, unreleased campaigns, or confidential narrative concepts",
+    "Generated video content may be mistaken for authentic footage, creating brand risk"
+  ],
+  "training_use_default": "Free and standard tier content may be used for model improvement. Enterprise tier provides contractual exclusions from training. Review Runway's current privacy policy for opt-out details.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 3, "ip_loss": 4, "output_quality": 3, "integration_risk": 2 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Conditional",
+  "references": [
+    { "title": "Runway Privacy Policy", "url": "https://runwayml.com/privacy-policy" },
+    { "title": "Runway Enterprise", "url": "https://runwayml.com/enterprise" }
+  ],
+  "last_reviewed": "2026-05-26"
+}

@@ -1,0 +1,35 @@
+{
+  "slug": "poe-quora",
+  "name": "Poe",
+  "vendor": "Quora",
+  "category": "Conversational AI",
+  "enterprise_offering": false,
+  "network_signatures": {
+    "domains": ["poe.com"],
+    "api_endpoints": ["api.poe.com"],
+    "sni_patterns": ["*.poe.com"]
+  },
+  "client_signatures": {
+    "desktop_apps": [{ "name": "Poe Desktop", "macOS_bundle": "com.quora.poe", "windows_publisher": "Quora, Inc." }],
+    "mobile_apps": [
+      { "name": "Poe iOS", "bundle_id": "com.quora.poe" },
+      { "name": "Poe Android", "package_id": "com.quora.poe" }
+    ]
+  },
+  "data_egress_concerns": [
+    "Prompts are routed to multiple third-party model providers (OpenAI, Anthropic, Google, Meta, etc.) with varying data policies",
+    "Users may unknowingly send data to a model with weaker privacy controls than expected",
+    "Conversation history stored on Quora infrastructure with Quora's data retention policies",
+    "No unified enterprise data governance across the multi-model architecture"
+  ],
+  "training_use_default": "Poe routes queries to third-party models; each model provider's training policy applies independently. Quora's own terms allow use of user content for service improvement. No enterprise training exclusion is available.",
+  "enterprise_dpa_available": false,
+  "risk_profile": { "data_exfiltration": 4, "ip_loss": 4, "output_quality": 2, "integration_risk": 2 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Block",
+  "references": [
+    { "title": "Poe Terms of Service", "url": "https://poe.com/tos" },
+    { "title": "Quora Privacy Policy", "url": "https://www.quora.com/about/privacy" }
+  ],
+  "last_reviewed": "2026-05-26"
+}

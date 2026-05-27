@@ -1,0 +1,35 @@
+{
+  "slug": "descript",
+  "name": "Descript",
+  "vendor": "Descript",
+  "category": "Specialized",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Descript Enterprise",
+  "network_signatures": {
+    "domains": ["descript.com", "www.descript.com", "app.descript.com"],
+    "api_endpoints": ["api.descript.com"],
+    "cdn_domains": ["cdn.descript.com"],
+    "sni_patterns": ["*.descript.com"]
+  },
+  "client_signatures": {
+    "process_names": ["Descript.exe (Windows)", "Descript.app (macOS)"],
+    "desktop_apps": [{ "name": "Descript Desktop", "macOS_bundle": "com.descript.app", "windows_publisher": "Descript, Inc." }]
+  },
+  "data_egress_concerns": [
+    "Video and audio recordings uploaded for editing may contain confidential meetings, interviews, or internal presentations",
+    "Automatic transcription processes all spoken content through cloud AI, potentially exposing sensitive dialogue",
+    "Voice cloning features (Overdub) capture biometric voice data subject to privacy regulations (BIPA, GDPR)",
+    "Screen recordings may inadvertently capture sensitive on-screen content (dashboards, credentials, internal tools)",
+    "Filler word removal and AI editing features process entire media files server-side"
+  ],
+  "training_use_default": "Descript states it does not use customer content to train AI models. Enterprise plans provide additional contractual commitments. Voice clone data is handled separately with explicit user consent. Review current privacy documentation.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 4, "ip_loss": 3, "output_quality": 2, "integration_risk": 3 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Allow with DLP",
+  "references": [
+    { "title": "Descript Privacy Policy", "url": "https://www.descript.com/privacy" },
+    { "title": "Descript Security", "url": "https://www.descript.com/security" }
+  ],
+  "last_reviewed": "2026-05-26"
+}

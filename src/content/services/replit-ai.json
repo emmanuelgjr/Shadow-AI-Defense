@@ -1,0 +1,38 @@
+{
+  "slug": "replit-ai",
+  "name": "Replit AI (Ghostwriter / Agent)",
+  "vendor": "Replit",
+  "category": "Code Assistant",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Replit Teams / Replit Enterprise",
+  "network_signatures": {
+    "domains": ["replit.com", "replit.dev"],
+    "api_endpoints": ["api.replit.com", "eval.replit.com"],
+    "cdn_domains": ["cdn.replit.com", "replit.app"],
+    "sni_patterns": ["*.replit.com", "*.replit.dev", "*.replit.app"]
+  },
+  "client_signatures": {
+    "process_names": ["replit (browser-based IDE)"],
+    "desktop_apps": [{ "name": "Replit Desktop", "windows_publisher": "Replit, Inc." }],
+    "mobile_apps": [
+      { "name": "Replit iOS", "bundle_id": "com.replit.Replit" },
+      { "name": "Replit Android", "package_id": "com.replit.app" }
+    ]
+  },
+  "data_egress_concerns": [
+    "Source code hosted and executed on Replit servers is accessible to the AI assistant",
+    "Environment variables and secrets stored in Replit may be exposed to AI completions",
+    "Entire project repositories uploaded to cloud-hosted IDE leave the corporate network",
+    "AI-generated code deployed directly from Replit may bypass code review and security scanning"
+  ],
+  "training_use_default": "Replit has stated that Enterprise plan code is excluded from AI training. Free-tier code visibility and training use should be reviewed in current terms. Replit's AI features leverage third-party models whose training policies also apply.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 5, "ip_loss": 5, "output_quality": 3, "integration_risk": 4 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001", "DET-MS-MDE-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [
+    { "title": "Replit Privacy Policy", "url": "https://replit.com/site/privacy" },
+    { "title": "Replit Terms of Service", "url": "https://replit.com/site/terms" }
+  ],
+  "last_reviewed": "2026-05-26"
+}

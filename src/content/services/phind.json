@@ -1,0 +1,31 @@
+{
+  "slug": "phind",
+  "name": "Phind",
+  "vendor": "Phind",
+  "category": "Search",
+  "enterprise_offering": false,
+  "network_signatures": {
+    "domains": ["phind.com", "www.phind.com"],
+    "api_endpoints": ["api.phind.com"],
+    "sni_patterns": ["*.phind.com"]
+  },
+  "client_signatures": {
+    "browser_extensions": [{ "name": "Phind Search Extension", "risk": "elevated" }]
+  },
+  "data_egress_concerns": [
+    "Developer search queries may reveal internal architecture details, vulnerability research, or proprietary API patterns",
+    "Code snippets pasted into search context expose source code to the service",
+    "Error messages and stack traces shared for debugging may contain internal hostnames, paths, or credentials",
+    "Search history creates a pattern of technology stack and problem areas that could inform competitive intelligence"
+  ],
+  "training_use_default": "Phind may use search queries and interactions to improve search quality and models. No enterprise tier with contractual training exclusion is currently available. Review current terms for opt-out availability.",
+  "enterprise_dpa_available": false,
+  "risk_profile": { "data_exfiltration": 3, "ip_loss": 3, "output_quality": 2, "integration_risk": 1 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Allow with DLP",
+  "references": [
+    { "title": "Phind Terms of Service", "url": "https://www.phind.com/terms" },
+    { "title": "Phind Privacy Policy", "url": "https://www.phind.com/privacy" }
+  ],
+  "last_reviewed": "2026-05-26"
+}

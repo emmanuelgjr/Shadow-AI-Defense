@@ -1,0 +1,39 @@
+{
+  "slug": "canva-ai",
+  "name": "Canva AI (Magic Studio)",
+  "vendor": "Canva",
+  "category": "Productivity",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "Canva Enterprise",
+  "network_signatures": {
+    "domains": ["canva.com", "www.canva.com"],
+    "api_endpoints": ["api.canva.com"],
+    "cdn_domains": ["static.canva.com", "media-public.canva.com", "template.canva.com"],
+    "sni_patterns": ["*.canva.com"]
+  },
+  "client_signatures": {
+    "process_names": ["Canva.exe (Windows)", "Canva.app (macOS)"],
+    "desktop_apps": [{ "name": "Canva Desktop", "macOS_bundle": "com.canva.CanvaDesktop", "windows_publisher": "Canva Pty Ltd" }],
+    "mobile_apps": [
+      { "name": "Canva iOS", "bundle_id": "com.canva.CanvaApp" },
+      { "name": "Canva Android", "package_id": "com.canva.editor" }
+    ]
+  },
+  "data_egress_concerns": [
+    "Brand kit assets (logos, fonts, color palettes) uploaded to Canva are stored on vendor infrastructure",
+    "Design templates for internal communications may contain sensitive organizational charts or financial data",
+    "Magic Write text generation receives document context that may include confidential content",
+    "Magic Eraser and background removal process images through cloud AI pipelines",
+    "Shared design workspaces may expose internal materials to unauthorized collaborators"
+  ],
+  "training_use_default": "Canva states that Enterprise plan content is not used for AI training. Free and Pro tier content handling should be verified against current terms. Magic Studio features route through third-party AI providers whose policies also apply.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 3, "ip_loss": 3, "output_quality": 2, "integration_risk": 2 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001", "DET-MS-PV-001"],
+  "recommended_response": "Allow Enterprise",
+  "references": [
+    { "title": "Canva Privacy Policy", "url": "https://www.canva.com/policies/privacy-policy/" },
+    { "title": "Canva Trust Center", "url": "https://www.canva.com/trust/" }
+  ],
+  "last_reviewed": "2026-05-26"
+}

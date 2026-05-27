@@ -1,0 +1,34 @@
+{
+  "slug": "elevenlabs",
+  "name": "ElevenLabs",
+  "vendor": "ElevenLabs",
+  "category": "Specialized",
+  "enterprise_offering": true,
+  "enterprise_offering_name": "ElevenLabs Enterprise",
+  "network_signatures": {
+    "domains": ["elevenlabs.io", "beta.elevenlabs.io"],
+    "api_endpoints": ["api.elevenlabs.io"],
+    "cdn_domains": ["storage.elevenlabs.io"],
+    "sni_patterns": ["*.elevenlabs.io"]
+  },
+  "client_signatures": {
+    "user_agents": ["ElevenLabs-SDK/*"],
+    "process_names": ["ElevenLabs.exe (Windows)"]
+  },
+  "data_egress_concerns": [
+    "Voice samples uploaded for cloning may contain biometric data subject to privacy regulation (BIPA, GDPR)",
+    "Text scripts sent for synthesis may contain confidential communications, internal memos, or PII",
+    "Cloned voice profiles could be misused for social engineering if access is not controlled",
+    "Audio outputs may reproduce sensitive meeting content or privileged legal discussions"
+  ],
+  "training_use_default": "Free-tier voice data and generated audio may be used for model improvement. Enterprise plans offer contractual training exclusion and custom voice isolation. Review current ElevenLabs terms.",
+  "enterprise_dpa_available": true,
+  "risk_profile": { "data_exfiltration": 4, "ip_loss": 3, "output_quality": 2, "integration_risk": 3 },
+  "detection_rules": ["DET-MS-SEN-001", "DET-NET-001"],
+  "recommended_response": "Allow with DLP",
+  "references": [
+    { "title": "ElevenLabs Terms of Service", "url": "https://elevenlabs.io/terms-of-service" },
+    { "title": "ElevenLabs Trust Center", "url": "https://elevenlabs.io/safety" }
+  ],
+  "last_reviewed": "2026-05-26"
+}
