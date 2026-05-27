@@ -1,0 +1,54 @@
+{
+  "id": "RB-007",
+  "title": "AI-generated content identified in external communications",
+  "trigger": "Manual report or DLP detection of AI-generated content in outbound emails, reports, or client deliverables. Triggered by DET-MS-PV-001 content-inspection policies flagging AI-characteristic patterns, or DET-MS-SEN-005 detecting unusual volumes of content with AI markers.",
+  "severity": "Medium",
+  "applies_to": ["DET-MS-PV-001", "DET-MS-SEN-005"],
+  "response_phases": {
+    "immediate": [
+      { "step": 1, "owner": "AI Governance triage", "action": "Identify the scope of the AI-generated content: which documents, emails, or deliverables are affected. Determine whether the content has been sent externally or is still in draft." },
+      { "step": 2, "owner": "AI Governance triage", "action": "Assess whether the content is client-facing, regulatory-facing, or has potential legal or reputational impact. If regulatory filing: escalate to Legal immediately." },
+      { "step": 3, "owner": "AI Governance triage", "action": "Preserve evidence: capture the content metadata, AI-generation indicators, and distribution list. Do not alter or recall the content without Legal guidance.", "expected_completion": "Within 24 hours" }
+    ],
+    "short_term": [
+      { "step": 4, "owner": "AI Governance triage + Content owner", "action": "Review the AI-generated content for accuracy, hallucinations, and factual errors. Document any inaccuracies found.", "expected_completion": "Within 5 business days" },
+      { "step": 5, "owner": "Legal + Compliance", "action": "Determine disclosure obligations. Consider: industry-specific AI disclosure requirements, contractual obligations with clients, and regulatory guidance on AI-generated content in the applicable jurisdiction.", "expected_completion": "Within 10 business days" },
+      { "step": 6, "owner": "AI Governance triage", "action": "If disclosure is required: draft disclosure communication in coordination with Legal. If not required: document the determination and rationale." }
+    ],
+    "long_term": [
+      { "step": 7, "owner": "AI Governance Committee", "action": "Develop or update the organization's AI content disclosure policy. Define which content types require human review, disclosure, or prohibition of AI generation." },
+      { "step": 8, "owner": "AI Governance triage + IT", "action": "Implement a content review workflow for high-risk content types (regulatory filings, client deliverables, press releases). Consider AI-content detection tooling in the review pipeline." },
+      { "step": 9, "owner": "AI Governance triage", "action": "Issue all-employee education communication (comms/all-employee-education) reinforcing expectations around AI-generated content and disclosure requirements." }
+    ]
+  },
+  "decision_tree": [
+    { "node": "Has the AI-generated content been sent externally?", "yes": "Assess regulatory and client impact immediately.", "no": "Review and correct before distribution." },
+    { "node": "Does the content contain factual errors or hallucinations?", "yes": "Initiate correction and consider recall/retraction with Legal guidance.", "no": "Focus on disclosure obligations." },
+    { "node": "Are there regulatory or contractual AI disclosure requirements?", "yes": "Draft and issue disclosure per Legal guidance.", "no": "Document determination; update policy to prevent recurrence." }
+  ],
+  "comms_templates": ["comms-all-employee-education"],
+  "policy_references": ["AUP § 9 — AI-generated content standards", "Content Review Policy — External communications"],
+  "raci": {
+    "responsible": "AI Governance triage",
+    "accountable": "AI Governance lead",
+    "consulted": ["Legal", "Compliance", "Content owner", "Client relationship manager (if client-facing)"],
+    "informed": ["AI Governance Committee", "Communications / PR (if public-facing)"]
+  },
+  "metrics_to_capture": [
+    "Number of AI-generated content incidents per quarter",
+    "Percentage involving client-facing or regulatory content",
+    "Time from detection to content review completion (target: ≤ 5 business days)",
+    "Number of required disclosures issued",
+    "Recurrence rate after employee education (target: declining trend)"
+  ],
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MAP-3.3", "MANAGE-4.1"],
+    "iso_iec_42001": ["8.2", "8.4"],
+    "nist_csf": ["RS.AN-1", "RS.CO-2"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-007", "AI-CTRL-019"],
+  "references": [
+    { "title": "NIST AI RMF — MAP-3 AI risks and benefits", "url": "https://www.nist.gov/itl/ai-risk-management-framework" },
+    { "title": "EU AI Act — Transparency obligations for AI-generated content", "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689" }
+  ]
+}

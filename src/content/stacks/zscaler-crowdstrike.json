@@ -1,0 +1,29 @@
+{
+  "slug": "zscaler-crowdstrike",
+  "name": "Zscaler + CrowdStrike",
+  "short": "ZS+CS",
+  "description": "Zscaler Internet Access as the SWG/CASB layer, CrowdStrike Falcon on the endpoint. A common stack in large enterprises with a Zscaler-first network security architecture. Relies on generic network rules through the Zscaler proxy and CrowdStrike endpoint telemetry for AI detection.",
+  "applicable_rule_platforms": ["Zscaler", "CrowdStrike Falcon", "Generic Network"],
+  "not_possible_rules": ["DET-MS-SEN-001", "DET-MS-SEN-002", "DET-MS-SEN-003", "DET-MS-SEN-004", "DET-MS-SEN-005", "DET-MS-MDE-001", "DET-MS-MDE-002", "DET-MS-PV-001", "DET-MS-MCAS-001", "DET-MS-MCAS-002", "DET-MS-MCAS-MANUAL-001", "DET-NS-001"],
+  "compensating_controls": [
+    "Use Zscaler's AI/ML application category and URL filtering policies to block or monitor consumer AI services at the proxy layer.",
+    "Use CrowdStrike Falcon Insight (DET-CS-FALCON-001) for endpoint-level detection of AI tool process execution and network connections.",
+    "Use CrowdStrike Falcon Data Protection (DET-CS-FALCON-002) for endpoint DLP equivalent to Purview Endpoint DLP.",
+    "Zscaler Nanolog Streaming Service (NSS) can export logs to your SIEM for correlation with CrowdStrike events.",
+    "Identity-side: pair with your identity provider's conditional-access policies (Okta, Entra ID) for unmanaged-device blocking."
+  ],
+  "things_to_know": [
+    { "title": "Zscaler AI/ML app category", "content": "Zscaler's URL database includes an AI/ML application category. Enable it in your URL filtering policy for immediate visibility into AI service access across all proxied traffic.", "severity": "info" },
+    { "title": "SSL inspection required", "content": "AI services use TLS. Without SSL inspection enabled in Zscaler, you lose visibility into API-level activity and can only see domain-level connections. Plan SSL inspection rollout before enforcement.", "severity": "warn" },
+    { "title": "Correlate to a central SIEM", "content": "Without Sentinel, route Zscaler NSS logs and CrowdStrike events to your central SIEM (Splunk, Chronicle, Elastic, Panther) for cross-source correlation against runbook triggers.", "severity": "info" },
+    { "title": "Generic network rules are your baseline", "content": "DET-NET-001 and DET-NET-002 work through any proxy/firewall, including Zscaler. Deploy these first while building Zscaler-native policies.", "severity": "info" }
+  ],
+  "policy_token_replacements": {
+    "siem_tool": "your central SIEM (Splunk / Chronicle / Elastic / Panther)",
+    "dlp_tool": "CrowdStrike Falcon Data Protection (plus Zscaler inline DLP)",
+    "edr_tool": "CrowdStrike Falcon Insight",
+    "casb_tool": "Zscaler CASB",
+    "swg_tool": "Zscaler Internet Access"
+  },
+  "recommended_deployment_order": ["DET-NET-001", "DET-CS-FALCON-001", "DET-NET-002", "DET-CS-FALCON-002"]
+}

@@ -1,0 +1,54 @@
+{
+  "id": "RB-005",
+  "title": "AI use detected in restricted department (Legal, HR, Finance)",
+  "trigger": "Detection of AI service access from users in restricted departments (Legal, HR, Finance) via DET-MS-SEN-001 enriched with department data, DET-MS-MCAS-002 user-scope filtering, or DET-NET-001 correlated with identity source.",
+  "severity": "High",
+  "applies_to": ["DET-MS-SEN-001", "DET-MS-MCAS-002", "DET-NET-001"],
+  "response_phases": {
+    "immediate": [
+      { "step": 1, "owner": "L1 SOC analyst", "action": "Verify the user's department against the HR system. Confirm the department is on the restricted list per the AI Acceptable Use Policy." },
+      { "step": 2, "owner": "L1 SOC analyst", "action": "Confirm the restriction policy is current and applies to the detected service. Check for any department-level exceptions or approved pilots." },
+      { "step": 3, "owner": "L2 SOC analyst", "action": "Notify the department manager within 4 hours. Provide factual summary: user identity (pseudonymized in logs), service accessed, timestamp, and applicable policy section.", "expected_completion": "Within 4 hours of alert" }
+    ],
+    "short_term": [
+      { "step": 4, "owner": "AI Governance triage + Department manager", "action": "Interview the user to understand the business context. Determine if a legitimate business need exists and whether sensitive departmental data (attorney-client privilege, employee PII, financial non-public information) was involved.", "expected_completion": "Within 5 business days" },
+      { "step": 5, "owner": "AI Governance triage", "action": "Assess data exposure. Review DLP events for the user in the detection window. If sensitive data egress is confirmed, escalate to RB-002.", "expected_completion": "Within 5 business days" },
+      { "step": 6, "owner": "AI Governance triage", "action": "If no data exposure: issue department-appropriate warning using comms/individual-warning-first. If data exposure: coordinate remediation with Privacy/Legal per RB-002.", "expected_completion": "Within 10 business days" }
+    ],
+    "long_term": [
+      { "step": 7, "owner": "AI Governance Committee + Department leadership", "action": "Review the department restriction policy. Determine whether the restriction remains appropriate or whether approved alternatives should be evaluated for the department's specific workflows." },
+      { "step": 8, "owner": "AI Governance triage", "action": "If department leadership identifies legitimate use cases: initiate approved-alternative evaluation with enterprise-grade tools that meet the department's regulatory and privilege requirements." },
+      { "step": 9, "owner": "AI Governance triage", "action": "Update detection rules to add department-specific alerting thresholds. Add the department to enhanced monitoring for 90 days." }
+    ]
+  },
+  "decision_tree": [
+    { "node": "Is the user confirmed to be in a restricted department?", "yes": "Proceed with restricted-department response.", "no": "Re-route to standard RB-001 process." },
+    { "node": "Is the department restriction still current and applicable?", "yes": "Enforce per policy.", "no": "Update restriction list; handle as standard RB-001." },
+    { "node": "Did the user handle sensitive departmental data (privileged, PII, MNPI)?", "yes": "Escalate to RB-002 for data-exposure response.", "no": "Issue warning and monitor." }
+  ],
+  "comms_templates": ["comms-manager-talking-points", "comms-individual-warning-first", "comms-department-level-briefing"],
+  "policy_references": ["AUP § 3 — Use of external AI services", "AUP § 3.1 — Department-specific restrictions"],
+  "raci": {
+    "responsible": "L1/L2 SOC analyst",
+    "accountable": "AI Governance triage lead",
+    "consulted": ["Department manager", "Department head", "Legal (for Legal dept incidents)", "HR Business Partner (for HR dept incidents)", "CFO office (for Finance dept incidents)"],
+    "informed": ["AI Governance Committee", "CISO"]
+  },
+  "metrics_to_capture": [
+    "Time from detection to department manager notification (target: ≤ 4 hours)",
+    "Time from notification to user interview (target: ≤ 5 business days)",
+    "Rate of data exposure confirmed in restricted-department cases",
+    "Number of restricted-department cases converting to approved-alternative evaluations",
+    "Repeat rate by department (target: < 5% within 90 days)"
+  ],
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-2.2", "MANAGE-4.1"],
+    "iso_iec_42001": ["8.2", "8.4", "10.2"],
+    "nist_csf": ["RS.AN-1", "RS.MI-1", "PR.AC-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-001", "AI-CTRL-016", "AI-CTRL-020"],
+  "references": [
+    { "title": "NIST AI RMF — GOVERN-4 Organizational Accountability", "url": "https://www.nist.gov/itl/ai-risk-management-framework" },
+    { "title": "ISO/IEC 42001:2023, clause 8.2 — AI risk assessment", "url": "https://www.iso.org/standard/81230.html" }
+  ]
+}

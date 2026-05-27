@@ -1,0 +1,52 @@
+{
+  "id": "RB-006",
+  "title": "Repeat offender — second or subsequent violation",
+  "trigger": "Same user triggers shadow AI detection after a prior warning has been documented. Identified when SOC analyst enriches a new alert and finds a prior case in the AI Governance Risk Register for the same user within 90 days.",
+  "severity": "High",
+  "applies_to": ["DET-MS-SEN-001", "DET-MS-MCAS-002", "DET-NET-001", "DET-CS-FALCON-001"],
+  "response_phases": {
+    "immediate": [
+      { "step": 1, "owner": "L1 SOC analyst", "action": "Confirm repeat status: query the AI Governance Risk Register for prior cases involving this user. Retrieve prior case ID, date, and outcome." },
+      { "step": 2, "owner": "L2 SOC analyst", "action": "Document the repeat violation with full context: prior warning date, current detection details, time elapsed since prior warning, and whether the same or different AI service is involved." },
+      { "step": 3, "owner": "L2 SOC analyst", "action": "Escalate to the user's direct manager and HR Business Partner simultaneously. Use comms/individual-warning-repeat template.", "expected_completion": "Within 4 hours of confirmation" }
+    ],
+    "short_term": [
+      { "step": 4, "owner": "HR Business Partner + Direct manager", "action": "Initiate formal disciplinary documentation per HR policy. Conduct formal meeting with the employee. Document the meeting outcome and any commitments.", "expected_completion": "Within 10 business days" },
+      { "step": 5, "owner": "AI Governance triage", "action": "Assess whether access restriction is warranted. Options: enhanced DLP monitoring, conditional-access policy restricting AI domains for the user, or device-level browser policy changes.", "expected_completion": "Within 5 business days" },
+      { "step": 6, "owner": "AI Governance triage", "action": "If access restriction is applied: document the restriction, set a review date (30 days), and notify the user and manager of the restriction scope and duration." }
+    ],
+    "long_term": [
+      { "step": 7, "owner": "AI Governance triage", "action": "Review enforcement effectiveness. If repeat offender rate exceeds 10%, escalate to the AI Governance Committee for program-level review of comms clarity, approved-tool availability, and policy enforceability." },
+      { "step": 8, "owner": "AI Governance Committee", "action": "Update policy if patterns indicate systemic issues (e.g., lack of approved alternatives, unclear AUP language, insufficient training). Adjust comms cadence for affected business units." }
+    ]
+  },
+  "decision_tree": [
+    { "node": "Is this the second or a subsequent violation?", "yes": "Follow repeat-offender escalation path.", "no": "Route to RB-001 first-occurrence process." },
+    { "node": "Was the prior warning issued within the last 90 days?", "yes": "Formal escalation with HR involvement.", "no": "Treat as soft repeat; re-issue warning with manager CC." },
+    { "node": "Is there evidence of sensitive data involvement in this occurrence?", "yes": "Escalate to RB-002 in parallel with disciplinary process.", "no": "Continue with disciplinary process only." }
+  ],
+  "comms_templates": ["comms-individual-warning-repeat", "comms-manager-talking-points"],
+  "policy_references": ["AUP § 3 — Use of external AI services", "AUP § 8 — Enforcement and consequences", "HR Policy — Progressive discipline"],
+  "raci": {
+    "responsible": "L2 SOC analyst",
+    "accountable": "AI Governance triage lead",
+    "consulted": ["Direct manager", "HR Business Partner", "Legal (if disciplinary action escalates)"],
+    "informed": ["AI Governance Committee (aggregate quarterly)", "CISO (if access restrictions applied)"]
+  },
+  "metrics_to_capture": [
+    "Time from detection to escalation (target: ≤ 4 hours)",
+    "Time from escalation to formal HR meeting (target: ≤ 10 business days)",
+    "Repeat offender rate across the program (target: < 10% within 90 days)",
+    "Percentage of repeat cases resulting in access restriction",
+    "Third-violation rate after formal warning (target: < 2%)"
+  ],
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-2.2", "MANAGE-4.1"],
+    "iso_iec_42001": ["8.2", "8.4", "10.2"],
+    "nist_csf": ["RS.AN-1", "RS.MI-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-016", "AI-CTRL-020"],
+  "references": [
+    { "title": "NIST AI RMF — MANAGE-4 Risk response", "url": "https://www.nist.gov/itl/ai-risk-management-framework" }
+  ]
+}

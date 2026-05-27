@@ -1,0 +1,54 @@
+{
+  "id": "RB-008",
+  "title": "Third-party vendor using AI without disclosure",
+  "trigger": "Discovery that a third-party vendor or service provider has introduced AI capabilities into their service without contractual authorization or disclosure. Detected via DET-MS-MCAS-001 surfacing new AI-related API calls from a vendor's application, or DET-MS-SEN-003 identifying unexpected AI service connections originating from vendor-managed infrastructure.",
+  "severity": "High",
+  "applies_to": ["DET-MS-MCAS-001", "DET-MS-SEN-003"],
+  "response_phases": {
+    "immediate": [
+      { "step": 1, "owner": "AI Governance triage", "action": "Assess the scope of data exposure: what organizational data does the vendor have access to, and what data may have been processed by the undisclosed AI capability?" },
+      { "step": 2, "owner": "AI Governance triage + Legal", "action": "Review the existing contract terms. Determine whether the vendor's use of AI violates data processing agreements, confidentiality clauses, or regulatory requirements.", "expected_completion": "Within 48 hours" },
+      { "step": 3, "owner": "AI Governance triage", "action": "Document the discovery with evidence: traffic analysis, API call patterns, vendor communications, and any public announcements about the vendor's AI features." }
+    ],
+    "short_term": [
+      { "step": 4, "owner": "Vendor manager + Legal", "action": "Engage the vendor formally. Request written confirmation of: what AI capabilities were introduced, when, what data is processed, whether data is used for model training, and sub-processor details.", "expected_completion": "Within 10 business days" },
+      { "step": 5, "owner": "AI Governance triage + Privacy", "action": "Evaluate the data impact. Conduct a data protection impact assessment (DPIA) if regulated data is involved. Determine whether data subject notification is required.", "expected_completion": "Within 15 business days" },
+      { "step": 6, "owner": "AI Governance triage", "action": "Update the vendor risk assessment in the AI Governance Risk Register. Adjust the vendor's risk tier based on findings." }
+    ],
+    "long_term": [
+      { "step": 7, "owner": "Procurement + Legal", "action": "Update vendor contracts to include AI disclosure requirements. Add standard AI use clauses to the organization's vendor contract templates: mandatory pre-notification of AI introduction, data processing restrictions, model training opt-out, and audit rights." },
+      { "step": 8, "owner": "AI Governance Committee", "action": "Add AI disclosure requirements to the standard vendor due diligence questionnaire. Require annual AI use attestations from critical vendors." },
+      { "step": 9, "owner": "AI Governance triage", "action": "Establish periodic vendor AI use review cadence. Monitor vendor product announcements and release notes for AI feature introductions." }
+    ]
+  },
+  "decision_tree": [
+    { "node": "Does the vendor's AI use involve processing organizational data?", "yes": "Full impact assessment and vendor engagement required.", "no": "Document and update risk assessment; monitor." },
+    { "node": "Does the vendor's AI use violate existing contract terms?", "yes": "Legal engagement; consider contractual remedies.", "no": "Update contract at next renewal to add AI disclosure terms." },
+    { "node": "Is regulated data (PII/PHI/PCI) involved?", "yes": "DPIA required; assess notification obligations.", "no": "Standard vendor risk update." }
+  ],
+  "comms_templates": ["comms-manager-talking-points"],
+  "policy_references": ["Vendor Management Policy — AI disclosure", "Data Processing Agreement — Sub-processor requirements"],
+  "raci": {
+    "responsible": "AI Governance triage",
+    "accountable": "AI Governance lead",
+    "consulted": ["Legal", "Procurement", "Privacy", "Vendor manager", "Business owner of the vendor relationship"],
+    "informed": ["AI Governance Committee", "CISO", "Audit committee (if regulatory impact)"]
+  },
+  "metrics_to_capture": [
+    "Time from discovery to vendor engagement (target: ≤ 10 business days)",
+    "Time from vendor engagement to written response (track vendor responsiveness)",
+    "Number of vendor AI disclosures per quarter (trend signal)",
+    "Percentage of critical vendors with updated AI contract clauses",
+    "Number of DPIAs triggered by vendor AI discoveries"
+  ],
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MAP-1.1", "MANAGE-2.2"],
+    "iso_iec_42001": ["8.2", "8.4", "A.10"],
+    "nist_csf": ["ID.SC-2", "RS.AN-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-001", "AI-CTRL-004"],
+  "references": [
+    { "title": "ISO/IEC 42001:2023, Annex A.10 — Third-party and supplier relationships", "url": "https://www.iso.org/standard/81230.html" },
+    { "title": "NIST AI RMF — MAP-1 Context and use cases", "url": "https://www.nist.gov/itl/ai-risk-management-framework" }
+  ]
+}

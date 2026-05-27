@@ -1,0 +1,23 @@
+{
+  "slug": "hybrid-multi-vendor",
+  "name": "Hybrid Multi-Vendor (Microsoft + Netskope + CrowdStrike)",
+  "short": "Hybrid",
+  "description": "The most comprehensive stack: Microsoft Sentinel and Purview for SIEM and DLP, Netskope as SWG/CASB, and CrowdStrike Falcon on the endpoint. Common in large enterprises that have best-of-breed tooling across security domains. Provides the deepest detection coverage across all platforms.",
+  "applicable_rule_platforms": ["Microsoft Sentinel", "Defender for Cloud Apps", "Purview DLP", "Defender for Endpoint", "CrowdStrike Falcon", "Netskope", "Conditional Access", "Generic Network"],
+  "not_possible_rules": [],
+  "compensating_controls": [],
+  "things_to_know": [
+    { "title": "Overlapping detection is a feature, not a bug", "content": "Multiple tools will detect the same AI activity. Use your SIEM to deduplicate and correlate. The overlap provides defense-in-depth: if one tool misses, another catches it.", "severity": "info" },
+    { "title": "Deployment sequence matters", "content": "Deploy detection in phases: identity and network first (Conditional Access, generic rules), then CASB/SWG (Netskope, MCAS), then endpoint (CrowdStrike, Defender), then DLP. This prevents alert fatigue from deploying everything simultaneously.", "severity": "warn" },
+    { "title": "Sentinel as the correlation hub", "content": "Use Microsoft Sentinel as the central correlation engine. Ingest CrowdStrike and Netskope events via data connectors. All runbook triggers should fire from Sentinel analytics rules for a single pane of glass.", "severity": "info" },
+    { "title": "License cost is significant", "content": "This stack requires licenses for Microsoft E5 (or equivalent), Netskope Intelligent SSE, and CrowdStrike Falcon. Ensure budget approval before committing to full deployment.", "severity": "warn" }
+  ],
+  "policy_token_replacements": {
+    "siem_tool": "Microsoft Sentinel (with CrowdStrike and Netskope data connectors)",
+    "dlp_tool": "Microsoft Purview Endpoint DLP + Netskope inline DLP + CrowdStrike Falcon Data Protection",
+    "edr_tool": "CrowdStrike Falcon Insight (primary) + Microsoft Defender for Endpoint (secondary)",
+    "casb_tool": "Netskope CASB + Microsoft Defender for Cloud Apps",
+    "swg_tool": "Netskope SWG"
+  },
+  "recommended_deployment_order": ["DET-MS-CA-001", "DET-NET-001", "DET-NS-001", "DET-MS-MCAS-001", "DET-MS-SEN-001", "DET-CS-FALCON-001", "DET-NET-002", "DET-MS-MDE-001", "DET-MS-PV-001", "DET-MS-SEN-002", "DET-MS-SEN-003", "DET-CS-FALCON-002", "DET-MS-MCAS-002", "DET-MS-MDE-002", "DET-MS-SEN-004", "DET-MS-SEN-005"]
+}

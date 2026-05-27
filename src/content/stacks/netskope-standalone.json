@@ -1,0 +1,29 @@
+{
+  "slug": "netskope-standalone",
+  "name": "Netskope SASE",
+  "short": "NS",
+  "description": "Netskope Intelligent SSE as the primary SWG/CASB/DLP layer. A Netskope-first stack common in organizations that have standardized on Netskope's Security Service Edge platform for cloud security. Detection relies on Netskope's native AI app discovery and generic network rules.",
+  "applicable_rule_platforms": ["Netskope", "Generic Network"],
+  "not_possible_rules": ["DET-MS-SEN-001", "DET-MS-SEN-002", "DET-MS-SEN-003", "DET-MS-SEN-004", "DET-MS-SEN-005", "DET-MS-MDE-001", "DET-MS-MDE-002", "DET-MS-PV-001", "DET-MS-MCAS-001", "DET-MS-MCAS-002", "DET-MS-MCAS-MANUAL-001", "DET-CS-FALCON-001", "DET-CS-FALCON-002"],
+  "compensating_controls": [
+    "Netskope's Cloud Confidence Index (CCI) provides native AI application discovery and risk scoring (DET-NS-001).",
+    "Netskope inline DLP can inspect content uploaded to AI services for sensitive data patterns.",
+    "Netskope's real-time protection policies can block, coach, or alert on AI app access with granular activity-level controls.",
+    "For endpoint detection: pair with your existing EDR (Defender, CrowdStrike, SentinelOne) and export events to your SIEM.",
+    "Identity-side: pair with your identity provider's conditional-access policies for device-trust enforcement."
+  ],
+  "things_to_know": [
+    { "title": "Netskope native AI app tagging", "content": "Netskope's app catalog tracks Generative AI apps natively with CCI ratings. Use the built-in Generative AI tag for immediate discovery without custom configuration.", "severity": "info" },
+    { "title": "Steering configuration is critical", "content": "Ensure the Netskope Client is deployed to all managed endpoints with proper steering configuration. Without client coverage, users bypassing the proxy are invisible.", "severity": "warn" },
+    { "title": "No endpoint-level detection", "content": "Without a dedicated EDR integration, this stack cannot detect AI desktop applications or browser extensions at the endpoint. Pair with an EDR for full coverage.", "severity": "warn" },
+    { "title": "SIEM integration recommended", "content": "Export Netskope events via Cloud Exchange to your SIEM for correlation with identity and endpoint data sources.", "severity": "info" }
+  ],
+  "policy_token_replacements": {
+    "siem_tool": "your central SIEM (via Netskope Cloud Exchange export)",
+    "dlp_tool": "Netskope inline DLP",
+    "edr_tool": "your endpoint detection tool (pair with existing EDR)",
+    "casb_tool": "Netskope CASB",
+    "swg_tool": "Netskope SWG"
+  },
+  "recommended_deployment_order": ["DET-NS-001", "DET-NET-001", "DET-NET-002"]
+}
