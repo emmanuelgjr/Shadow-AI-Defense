@@ -1,0 +1,50 @@
+{
+  "id": "DET-MS-CA-003",
+  "name": "Conditional Access — Require compliant device for AI service access",
+  "description": "Conditional Access policy that enforces device compliance requirements before allowing access to AI service applications, ensuring that only managed devices with up-to-date security controls can interact with AI platforms.",
+  "platform": "Conditional Access",
+  "detection_type": "Identity",
+  "rule_language": "config",
+  "rule_query": "# Microsoft Entra Conditional Access — Require Compliant Device for AI Service Access\n# Navigation: Entra Admin Center > Protection > Conditional Access > New Policy\n#\n# Policy: Require Compliant Device for AI Services\n#\n# Assignments:\n#   Users:\n#     - Include: All users\n#     - Exclude: Break-glass accounts, service accounts\n#\n#   Target resources:\n#     - Select: Specific cloud apps\n#     - Apps (register as enterprise apps or use app filter):\n#       - ChatGPT (OpenAI) — app ID from Entra gallery or manual registration\n#       - Claude (Anthropic) — manual registration with SSO redirect URIs\n#       - Gemini (Google) — manual registration\n#       - GitHub Copilot — from Entra gallery\n#       - Any other AI apps registered in Entra for SSO\n#     - Filter for applications (supplementary):\n#       - customSecurityAttribute.AIGovernance.requiresCompliance == true\n#\n#   Conditions:\n#     - Device platforms: All (Windows, macOS, iOS, Android, Linux)\n#     - Client apps: Browser, Mobile apps and desktop clients\n#     - Locations: All locations (including trusted)\n#\n# Access controls:\n#   Grant:\n#     - Require device to be marked as compliant\n#     - OR Require Hybrid Azure AD joined device\n#     - For multiple controls: Require one of the selected controls\n#\n# Session controls:\n#   - Sign-in frequency: 8 hours (force re-evaluation of compliance)\n#   - Persistent browser session: Disabled (no 'stay signed in' for AI services)\n#\n# Intune Compliance Policy requirements (must be met for device to be 'compliant'):\n#   Windows:\n#     - BitLocker encryption: Required\n#     - Firewall: Required\n#     - Antivirus: Required and up to date\n#     - OS version: minimum supported version\n#     - Defender for Endpoint risk score: Clear or Low\n#   macOS:\n#     - FileVault encryption: Required\n#     - System Integrity Protection: Enabled\n#     - Gatekeeper: Enabled\n#   Mobile:\n#     - Device encryption: Required\n#     - Not jailbroken/rooted: Required\n#     - Minimum OS version: defined per platform\n#\n# Monitoring:\n#   - Sign-in logs: filter by policy name to identify non-compliant access attempts\n#   - Compliance dashboard: track device compliance rate across AI service users\n#   - Alert on sustained non-compliance attempts (> 5 per user per day)",
+  "rule_explanation": "Ensures that AI service access only occurs from devices under organizational management with verified security controls. This is critical for Shadow AI defense because a compliant device has endpoint DLP (DET-MS-PV-001, DET-MS-PV-002), endpoint detection (DET-MS-MDE-001, DET-MS-MDE-002, DET-MS-MDE-003), and network monitoring (DET-MS-SEN-001) active. Without device compliance, a user accessing an AI service from an unmanaged personal device bypasses the entire detective and preventive control stack. The 8-hour sign-in frequency ensures compliance state is re-evaluated throughout the workday, catching devices that fall out of compliance (e.g., disabled antivirus, overdue patches). This policy complements DET-MS-CA-001 (which blocks unmanaged devices from all apps) by adding AI-specific enforcement for organizations doing phased rollout.",
+  "required_data_sources": [
+    "Microsoft Entra ID P1 or higher",
+    "Microsoft Intune (device compliance state)",
+    "Entra ID sign-in logs"
+  ],
+  "prerequisites": [
+    "Entra ID P1+ licensed",
+    "Microsoft Intune licensed and devices enrolled",
+    "Intune compliance policies configured and deployed",
+    "AI service applications registered in Entra ID (either from gallery or manual registration)",
+    "Break-glass accounts created and excluded",
+    "Minimum 80% device enrollment rate before enforcing (to avoid mass lockout)"
+  ],
+  "expected_volume": "Blocked access attempts: 20-60/day initially, dropping to 5-15/day as device enrollment completes. Most blocks will be from unmanaged personal devices or non-compliant corporate devices with overdue patches.",
+  "false_positive_guidance": "Devices that temporarily fall out of compliance (e.g., pending reboot for patches, antivirus definition update in progress) will be blocked until compliance is restored. This is by design but may frustrate users — ensure Intune compliance grace periods are configured appropriately. Contractor devices on BYOD programs may not be enrolled in Intune — provide a web-based alternative or Company Portal enrollment path.",
+  "tuning_steps": [
+    "Deploy in report-only mode for 2 weeks to measure impact.",
+    "Review non-compliant device reasons — address systemic compliance gaps before enforcing.",
+    "Configure Intune compliance grace periods (recommended: 24 hours for patch-related non-compliance).",
+    "Register all sanctioned AI services as enterprise applications in Entra ID.",
+    "Add custom security attributes to AI apps for scalable policy targeting.",
+    "Phase rollout: pilot group -> department -> enterprise-wide.",
+    "Pair with Company Portal self-service enrollment for users on non-enrolled devices."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "microsoft-copilot-consumer"],
+  "severity": "Medium",
+  "recommended_response": "RB-001",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1"],
+    "iso_iec_42001": ["8.2"],
+    "nist_csf": ["PR.AC-1", "PR.AC-3", "PR.IP-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-26",
+  "last_reviewed": "2026-05-26",
+  "references": [
+    { "title": "Conditional Access — Require compliant device", "url": "https://learn.microsoft.com/entra/identity/conditional-access/howto-conditional-access-policy-compliant-device" },
+    { "title": "Intune device compliance policies", "url": "https://learn.microsoft.com/mem/intune/protect/device-compliance-get-started" }
+  ]
+}

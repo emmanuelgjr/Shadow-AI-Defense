@@ -1,0 +1,45 @@
+{
+  "id": "DET-ZS-003",
+  "name": "Zscaler — Cloud browser isolation for AI services",
+  "description": "Zscaler Browser Isolation policy that renders AI service sessions in an isolated cloud container, providing full visibility into user interactions while preventing direct data transfer to AI platforms.",
+  "platform": "Zscaler",
+  "detection_type": "Network",
+  "rule_language": "config",
+  "rule_query": "# Zscaler — Cloud Browser Isolation (CBI) for AI Services\n# Navigation: ZIA Admin Portal > Policy > Cloud Browser Isolation\n#\n# Isolation Profile: AI Service Isolation\n#\n# Profile settings:\n#   - Name: Isolate AI Services\n#   - Isolation type: Isolation with controls\n#\n# Data controls (within isolated session):\n#   - Copy to clipboard: Block (prevent copy from corporate apps into isolated AI session)\n#   - Paste from clipboard: Block (prevent paste into AI chat/upload fields)\n#   - File upload: Block (prevent file upload to AI services)\n#   - File download: Block (prevent downloading AI-generated content with embedded data)\n#   - Print: Allow (for audit trail — user can screenshot but effort is logged)\n#   - Keyboard input: Allow (manual typing permitted — limits bulk data transfer)\n#\n# Alternatively, for monitoring without blocking:\n#   - Copy/Paste: Allow but log\n#   - File upload: Allow but log + DLP inspect\n#   - This mode provides full visibility while maintaining productivity\n#\n# URL Filtering Rule (pairs with isolation profile):\n#   - Name: Isolate AI/ML Applications\n#   - URL Category: 'AI/ML Applications'\n#   - Action: Isolate\n#   - Isolation profile: AI Service Isolation (defined above)\n#   - Users: All users (or phased by department)\n#   - Exceptions: Sanctioned enterprise AI with dedicated allow rule above\n#\n# Logging:\n#   - All isolated session activity logged including keystrokes-to-AI and paste attempts\n#   - Session recordings available for incident investigation (if licensed)\n#   - Forward logs to SIEM via NSS for correlation",
+  "rule_explanation": "Zscaler's Cloud Browser Isolation (CBI) renders web sessions in a remote container, streaming only pixels to the user's browser. When applied to AI services, this creates a controlled environment where users can interact with AI tools but cannot transfer bulk data via copy-paste, file upload, or download. This approach is particularly effective for organizations that want to allow AI experimentation while preventing data exfiltration — it provides a middle ground between full block and full allow. The isolation layer also generates detailed session logs that are unavailable with standard proxy logging, capturing actual interaction patterns.",
+  "required_data_sources": [
+    "Zscaler Internet Access (ZIA) with Cloud Browser Isolation (CBI) add-on",
+    "Zscaler Client Connector deployed on managed endpoints"
+  ],
+  "prerequisites": [
+    "Zscaler Internet Access with Cloud Browser Isolation (CBI) licensed",
+    "Zscaler Client Connector deployed to managed endpoints",
+    "SSL/TLS inspection enabled for AI service domains",
+    "CBI isolation profiles configured with appropriate data controls",
+    "User communications explaining the isolated-browser experience for AI services"
+  ],
+  "expected_volume": "Isolation session logs: 50-200 isolated sessions per day per 10k users. Blocked paste/upload attempts: 10-40 per day initially, dropping as users adjust behavior.",
+  "false_positive_guidance": "Browser isolation may degrade the user experience for legitimate AI tool usage — some AI services have complex UIs that render differently in isolation. Test top AI services in isolation before broad rollout. Some browser extensions may not function within isolated sessions — coordinate with users who rely on accessibility extensions.",
+  "tuning_steps": [
+    "Start with monitoring mode (allow all actions but log) for 2 weeks to understand usage patterns.",
+    "Enable clipboard blocking for unsanctioned AI services while keeping sanctioned services unrestricted.",
+    "Review session logs weekly to identify high-risk users transferring sensitive data.",
+    "Test user experience in isolation for each major AI service before enforcing.",
+    "Consider allowing file upload with DLP inspection as a middle ground for departments with legitimate AI use cases."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity", "deepseek", "mistral-le-chat", "xai-grok"],
+  "severity": "Medium",
+  "recommended_response": "RB-001",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-2.2"],
+    "iso_iec_42001": ["8.2", "8.3"],
+    "nist_csf": ["PR.AC-3", "PR.DS-5", "DE.CM-7"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020", "AI-CTRL-008"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-26",
+  "last_reviewed": "2026-05-26",
+  "references": [
+    { "title": "Zscaler Cloud Browser Isolation", "url": "https://help.zscaler.com/zia/about-cloud-browser-isolation" }
+  ]
+}

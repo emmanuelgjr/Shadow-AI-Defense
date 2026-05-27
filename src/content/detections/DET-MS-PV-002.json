@@ -1,0 +1,51 @@
+{
+  "id": "DET-MS-PV-002",
+  "name": "Purview DLP — Sensitive label content uploaded to AI services",
+  "description": "Detects when documents with Microsoft Purview sensitivity labels (Confidential, Highly Confidential, Restricted) are uploaded, pasted, or shared to consumer AI services, leveraging label-based detection for higher precision than content inspection alone.",
+  "platform": "Purview DLP",
+  "detection_type": "DLP",
+  "rule_language": "config",
+  "rule_query": "# Purview DLP — Sensitivity Label-Based AI Upload Detection\n# Navigation: Microsoft Purview > Data Loss Prevention > Policies > Create policy\n#\n# Policy: Block Labeled Content to AI Services\n# Scope: Endpoint DLP (Edge for Business, Chrome/Firefox with Purview extension)\n#\n# Rule 1: Block Highly Confidential / Restricted to AI services\n#   Conditions:\n#     - Content contains sensitivity label: 'Highly Confidential' OR 'Restricted'\n#     - Activity: Upload to cloud service, Paste to browser, Copy to clipboard\n#     - Destination: Service domain group 'Consumer LLM Domains'\n#   Actions:\n#     - Block (no override)\n#     - Notify user: toast with explanation and link to approved AI tools\n#     - Generate incident: severity Critical\n#     - Alert: AI Governance + Security Operations\n#\n# Rule 2: Warn on Confidential to AI services\n#   Conditions:\n#     - Content contains sensitivity label: 'Confidential' OR 'Internal'\n#     - Activity: Upload to cloud service, Paste to browser\n#     - Destination: Service domain group 'Consumer LLM Domains'\n#   Actions:\n#     - Block with override (user provides business justification)\n#     - Notify user: toast explaining risk and approved alternatives\n#     - Generate incident: severity High\n#     - Log override justification for weekly review\n#\n# Rule 3: Audit General labeled content to AI services\n#   Conditions:\n#     - Content contains sensitivity label: 'General'\n#     - Activity: Upload to cloud service\n#     - Destination: Service domain group 'Consumer LLM Domains'\n#   Actions:\n#     - Audit only (log event, no block)\n#     - Severity: Informational\n#\n# Service domain group 'Consumer LLM Domains':\n#   Purview > DLP > Endpoint settings > Service domains\n#   Populated from /watchlists/ConsumerLLMDomains.csv\n#\n# Prerequisites:\n#   - Sensitivity labels deployed and adopted (minimum 60% label coverage target)\n#   - Auto-labeling policies active to ensure unlabeled content is minimized",
+  "rule_explanation": "Builds on DET-MS-PV-001 by using sensitivity labels as the primary detection signal instead of (or in addition to) sensitive information types. Label-based detection has significantly higher precision than content-pattern matching because the label reflects a deliberate classification decision, either by the user or by auto-labeling policies. The tiered approach (block for Highly Confidential, warn for Confidential, audit for General) matches the severity of the action to the classification of the data. This policy is most effective in organizations with mature sensitivity-label adoption — pair with auto-labeling to maximize coverage of unlabeled content.",
+  "required_data_sources": [
+    "Microsoft Purview Endpoint DLP enabled",
+    "Microsoft Purview Information Protection (sensitivity labels deployed)",
+    "Devices onboarded to Microsoft Purview",
+    "Edge for Business (or Chrome/Firefox with Purview browser extension)",
+    "Service domain group: ConsumerLLMDomains"
+  ],
+  "prerequisites": [
+    "Microsoft 365 E5 Compliance or Purview Information Protection add-on",
+    "Sensitivity labels published to users and auto-labeling policies active",
+    "Minimum 60% label coverage across documents and emails (measure via Content Explorer)",
+    "Devices onboarded to Purview Endpoint DLP",
+    "Service domain group populated from /watchlists/ConsumerLLMDomains.csv",
+    "Users trained on sensitivity labels and AI acceptable use policy"
+  ],
+  "expected_volume": "Lower than DET-MS-PV-001 because label-based matching is more precise. Expect 2-15 events/day per 10k users for Confidential tier, 0-3/day for Highly Confidential tier. Audit-mode events for General label will be higher (20-80/day).",
+  "false_positive_guidance": "Primary FP source: auto-labeling over-classification. Documents auto-labeled as Confidential that contain only public information will generate unnecessary alerts. Refine auto-labeling policies based on DLP incident feedback. Also watch for label inheritance — a document may carry a Confidential label because it was copied from a Confidential template even though the current content is benign.",
+  "tuning_steps": [
+    "Verify sensitivity-label adoption rate before deploying — low adoption means low coverage, not low risk.",
+    "Start Rule 2 (Confidential) in audit mode for 2 weeks to baseline volume.",
+    "Review auto-labeling policy accuracy — over-classification drives FPs in this rule.",
+    "Coordinate with Information Protection team to align label definitions with AI policy.",
+    "Monitor override justifications weekly — recurring overrides indicate a workflow gap.",
+    "Add new AI service domains to the Consumer LLM Domains service domain group monthly."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity", "deepseek", "microsoft-copilot-consumer", "qwen"],
+  "severity": "High",
+  "recommended_response": "RB-002",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7", "MANAGE-2.2"],
+    "iso_iec_42001": ["8.2", "8.3", "8.4"],
+    "mitre_attack": ["T1567.002"],
+    "nist_csf": ["DE.CM-3", "PR.DS-5", "PR.IP-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020", "AI-CTRL-013"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-26",
+  "last_reviewed": "2026-05-26",
+  "references": [
+    { "title": "Microsoft Purview — Sensitivity labels in DLP policies", "url": "https://learn.microsoft.com/purview/dlp-sensitivity-label-as-condition" }
+  ]
+}

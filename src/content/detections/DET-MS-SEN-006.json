@@ -1,0 +1,41 @@
+{
+  "id": "DET-MS-SEN-006",
+  "name": "Sentinel — AI service usage spike detection (anomaly)",
+  "description": "Anomaly detection rule in Microsoft Sentinel that identifies sudden spikes in AI service traffic per user, indicating potential bulk data exfiltration or new Shadow AI adoption patterns.",
+  "platform": "Microsoft Sentinel",
+  "detection_type": "Network",
+  "rule_language": "KQL",
+  "rule_query": "// Detect anomalous spikes in AI service usage per user\n// Compares current-day connection count against 14-day baseline per user\nlet llmDomains = _GetWatchlist('ConsumerLLMDomains') | project SearchKey;\nlet lookback = 14d;\nlet baseline = DeviceNetworkEvents\n| where Timestamp between (ago(lookback) .. ago(1d))\n| where ActionType == 'ConnectionSuccess'\n| extend Domain = tostring(parse_url(RemoteUrl).Host)\n| where Domain in (llmDomains)\n| summarize DailyCount = count() by Day = bin(Timestamp, 1d), InitiatingProcessAccountUpn\n| summarize AvgDaily = avg(DailyCount), StdDevDaily = stdev(DailyCount) by InitiatingProcessAccountUpn;\nDeviceNetworkEvents\n| where Timestamp > ago(1d)\n| where ActionType == 'ConnectionSuccess'\n| extend Domain = tostring(parse_url(RemoteUrl).Host)\n| where Domain in (llmDomains)\n| summarize TodayCount = count(), Domains = make_set(Domain, 20) by InitiatingProcessAccountUpn\n| join kind=inner baseline on InitiatingProcessAccountUpn\n| extend Threshold = AvgDaily + (3 * StdDevDaily)\n| where TodayCount > Threshold and TodayCount > 20\n| extend AnomalyScore = round((TodayCount - AvgDaily) / iff(StdDevDaily == 0, 1.0, StdDevDaily), 2)\n| project InitiatingProcessAccountUpn, TodayCount, AvgDaily = round(AvgDaily, 1), StdDevDaily = round(StdDevDaily, 1), Threshold = round(Threshold, 1), AnomalyScore, Domains\n| order by AnomalyScore desc",
+  "rule_explanation": "Calculates a per-user 14-day baseline of daily connection counts to consumer LLM domains, then flags users whose current-day count exceeds the baseline mean plus three standard deviations. The minimum threshold of 20 connections prevents alerting on users with very low baselines. The anomaly score quantifies how far above normal the usage is. Spikes may indicate a user beginning bulk data migration to an AI tool, automated scripting against an AI API, or a new team adopting an AI service without authorization.",
+  "required_data_sources": [
+    "Microsoft Defender for Endpoint (DeviceNetworkEvents)",
+    "Sentinel watchlist: ConsumerLLMDomains"
+  ],
+  "prerequisites": [
+    "Microsoft 365 E5 or Defender for Endpoint P2",
+    "Sentinel workspace with M365D connector",
+    "At least 14 days of historical DeviceNetworkEvents data for baseline",
+    "Watchlist created from /watchlists/ConsumerLLMDomains.csv"
+  ],
+  "expected_volume": "Low — 2-10 anomaly alerts per day for an org of 10k users. Most will be legitimate behavior changes (e.g., user starts a new project leveraging AI heavily). Investigate users with AnomalyScore > 5.",
+  "false_positive_guidance": "Common FP: (1) users returning from vacation with compressed work patterns, (2) users in approved AI pilot programs who ramp up usage, (3) browser tabs auto-refreshing AI service pages generating passive connections. Correlate with DET-MS-SEN-005 (data volume) to distinguish browsing from data transfer.",
+  "tuning_steps": [
+    "Adjust the standard-deviation multiplier (default 3) based on organizational tolerance — lower for stricter detection.",
+    "Increase the minimum TodayCount threshold above 20 if baseline noise is high.",
+    "Exclude users in approved AI pilot groups from anomaly alerting.",
+    "Correlate with DET-MS-SEN-005 to prioritize spikes that also involve large data volumes."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity", "deepseek"],
+  "severity": "Medium",
+  "recommended_response": "RB-001",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7"],
+    "iso_iec_42001": ["8.2", "8.3"],
+    "nist_csf": ["DE.AE-1", "DE.CM-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020", "AI-CTRL-008"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-26",
+  "last_reviewed": "2026-05-26",
+  "references": []
+}

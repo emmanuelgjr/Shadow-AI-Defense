@@ -1,0 +1,48 @@
+{
+  "id": "DET-ZS-002",
+  "name": "Zscaler — DLP inspection of AI service uploads",
+  "description": "Zscaler Internet Access DLP policy that inspects content uploaded to AI services, detecting and preventing sensitive data from being sent to consumer generative AI platforms.",
+  "platform": "Zscaler",
+  "detection_type": "DLP",
+  "rule_language": "config",
+  "rule_query": "# Zscaler Internet Access (ZIA) — DLP Policy for AI Service Uploads\n# Navigation: ZIA Admin Portal > Policy > Data Loss Prevention\n#\n# DLP Rule: Block Sensitive Uploads to AI Services\n#\n# Rule order: Place after sanctioned-AI DLP exceptions\n#\n# Web Application Rules:\n#   - Name: AI Service Sensitive Data Upload Prevention\n#   - Cloud applications: select all apps in 'AI/ML Applications' category\n#     OR specify: ChatGPT, Claude, Gemini, Perplexity, DeepSeek, Mistral\n#   - File types: All (or scope to: documents, spreadsheets, code files, text)\n#   - Direction: Upload only\n#\n# DLP Engines (Settings > DLP > DLP Engines):\n#   - Engine: AI-Upload-Sensitive-Content\n#   - Dictionaries (match any):\n#     - Built-in: Credit Card Numbers, Social Security Numbers, IBAN,\n#       Passport Numbers, National ID Numbers, Health Insurance Claim Numbers\n#     - Custom dictionary: Internal-Project-Codenames (regex-based)\n#     - Custom dictionary: Source-Code-Patterns (file extensions + syntax markers)\n#     - Custom dictionary: Customer-ID-Patterns (org-specific format)\n#   - EDM (Exact Data Match): configure for employee PII, customer PII databases\n#   - IDM (Indexed Document Match): fingerprint confidential document repositories\n#   - Confidence threshold: High (reduce FPs at cost of some FN)\n#\n# Actions:\n#   - Primary: Block\n#   - ICAP notification: enabled (if ICAP server configured)\n#   - User notification: display custom block message with AUP link\n#   - Incident receiver: AI Governance team email / SIEM webhook\n#   - Severity: High\n#\n# Exceptions:\n#   - Sanctioned enterprise AI instances (match by domain or cloud app instance)\n#   - Approved AI pilot user groups (synced from IdP)",
+  "rule_explanation": "Zscaler's cloud-native DLP engine inspects content inline as it transits through ZIA. This policy targets uploads to AI/ML categorized applications, applying dictionaries for PII, PHI, financial data, source code, and proprietary content. Zscaler supports Exact Data Match (EDM) for structured data (employee/customer databases) and Indexed Document Matching (IDM) for fingerprinting confidential documents — both significantly reduce false positives compared to regex-only approaches. Because inspection occurs in the Zscaler cloud, it covers all traffic regardless of the user's browser or client application.",
+  "required_data_sources": [
+    "Zscaler Internet Access (ZIA) with DLP subscription",
+    "Zscaler Client Connector deployed on endpoints",
+    "SSL/TLS inspection enabled for AI service domains"
+  ],
+  "prerequisites": [
+    "Zscaler Internet Access with Cloud DLP licensed (Transformation bundle or DLP add-on)",
+    "SSL/TLS inspection enabled — AI service domains must NOT be in the bypass list",
+    "Zscaler Client Connector deployed to managed endpoints",
+    "DLP dictionaries configured with organization-specific patterns",
+    "EDM/IDM databases populated for structured/unstructured sensitive data (optional but recommended)"
+  ],
+  "expected_volume": "After tuning: 15-60 DLP incidents per day per 10k users. Higher in engineering and data-heavy departments. Volume decreases 50-70% within 30 days as awareness builds.",
+  "false_positive_guidance": "Major FP sources: (1) sample/test data in documents containing realistic PII patterns, (2) public code repositories being discussed that match source-code dictionaries, (3) marketing materials with financial-format strings. Use EDM and IDM to dramatically reduce FPs compared to dictionary-only matching. Tune confidence thresholds iteratively.",
+  "tuning_steps": [
+    "Deploy in log-only mode for 2 weeks and classify every DLP match as TP/FP.",
+    "Adjust dictionary confidence thresholds based on FP analysis.",
+    "Enable EDM for employee and customer PII databases to replace broad regex patterns.",
+    "Enable IDM for confidential document fingerprinting to catch paraphrased content.",
+    "Transition to block mode after achieving < 10% FP rate.",
+    "Review DLP incidents weekly — feed new patterns back into custom dictionaries."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity", "deepseek", "mistral-le-chat", "qwen"],
+  "severity": "High",
+  "recommended_response": "RB-002",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7", "MANAGE-2.2"],
+    "iso_iec_42001": ["8.2", "8.3", "8.4"],
+    "mitre_attack": ["T1567.002"],
+    "nist_csf": ["DE.CM-3", "PR.DS-5"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020", "AI-CTRL-013"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-26",
+  "last_reviewed": "2026-05-26",
+  "references": [
+    { "title": "Zscaler Cloud DLP", "url": "https://help.zscaler.com/zia/about-dlp" }
+  ]
+}

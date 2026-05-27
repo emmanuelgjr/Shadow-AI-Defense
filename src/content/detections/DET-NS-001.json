@@ -1,0 +1,43 @@
+{
+  "id": "DET-NS-001",
+  "name": "Netskope — AI SaaS application discovery via Cloud Confidence Index",
+  "description": "Discovers AI and generative AI applications in use across the organization by leveraging Netskope's Cloud Confidence Index (CCI) catalog and real-time traffic analysis.",
+  "platform": "Netskope",
+  "detection_type": "Application Connector",
+  "rule_language": "config",
+  "rule_query": "# Netskope — Cloud Confidence Index (CCI) AI application discovery\n# Navigation: Netskope Tenant UI > Settings > Security Cloud Platform > App Definition\n#\n# Discovery configuration:\n#   - Enable Cloud Confidence Index (CCI) scoring for all discovered applications\n#   - Filter applications by tag: 'Generative AI'\n#   - Supplementary tags to include: 'AI/ML', 'AI Code Assistant', 'AI Productivity'\n#\n# App Instance classification:\n#   - Sanctioned: enterprise-contracted AI tools (e.g., Azure OpenAI, enterprise Copilot)\n#   - Monitored: AI apps under evaluation by AI Governance team\n#   - Unsanctioned: consumer AI tools not approved for corporate use\n#\n# Alert policy (Policies > Real-time Protection):\n#   - Name: Shadow AI Discovery Alert\n#   - Condition: App tag IN ('Generative AI', 'AI/ML', 'AI Code Assistant')\n#     AND App instance = 'Unsanctioned'\n#     AND Activity = 'Access' OR 'Upload'\n#   - Action: Alert (do not block at discovery stage)\n#   - Notification: Send to AI Governance triage queue via webhook/email\n#\n# Reporting:\n#   - SkopeIT > Applications: filter by Generative AI tag\n#   - Dashboard: create custom widget showing AI app usage trends per department\n#   - Export weekly discovery report to AI Governance team",
+  "rule_explanation": "Netskope's CCI catalog rates thousands of cloud applications on security, auditability, and business readiness. Applications tagged as Generative AI, AI/ML, and AI Code Assistant are automatically identified when traffic flows through the Netskope proxy. This discovery-only policy surfaces which AI services employees are using without blocking, providing the initial inventory for a Shadow AI governance program. Pair with DET-NS-002 and DET-NS-003 to add DLP and enforcement layers.",
+  "required_data_sources": [
+    "Netskope Cloud Exchange or inline proxy (forward/reverse proxy mode)",
+    "Netskope CCI catalog (updated automatically by Netskope)"
+  ],
+  "prerequisites": [
+    "Netskope Intelligent SSE licensed (CASB + SWG at minimum)",
+    "Netskope Client (formerly Netskope Secure Client) deployed to managed endpoints",
+    "Steering configuration directing web traffic through Netskope proxy",
+    "CCI catalog access enabled (included with standard Netskope subscription)"
+  ],
+  "expected_volume": "Initial discovery: 30-100 AI applications within the first week. Steady-state: 2-8 new AI apps per week as the market evolves.",
+  "false_positive_guidance": "Netskope's CCI catalog may tag non-AI productivity tools that incorporate minor AI features. Review each discovered app before classifying. Some internal/custom apps may not appear in the CCI catalog and require manual app definition.",
+  "tuning_steps": [
+    "Review and classify all AI-tagged apps within 14 days of first discovery.",
+    "Create custom app definitions for internal AI tools not in the CCI catalog.",
+    "Sync app sanction status with the AI Inventory in the Governance Toolkit monthly.",
+    "Adjust CCI score thresholds to reflect organizational risk appetite (e.g., block apps with CCI < 40)."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity", "microsoft-copilot-consumer", "deepseek", "midjourney", "cursor", "otter-ai"],
+  "severity": "Informational",
+  "recommended_response": "RB-003",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MAP-1.1"],
+    "iso_iec_42001": ["8.2", "8.4"],
+    "nist_csf": ["DE.CM-7", "ID.AM-2"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-001", "AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-26",
+  "last_reviewed": "2026-05-26",
+  "references": [
+    { "title": "Netskope Cloud Confidence Index", "url": "https://www.netskope.com/platform/cloud-confidence-index" }
+  ]
+}

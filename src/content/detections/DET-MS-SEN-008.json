@@ -1,0 +1,42 @@
+{
+  "id": "DET-MS-SEN-008",
+  "name": "Sentinel — Large payload upload to AI API endpoints",
+  "description": "Detects large data uploads (file or POST body) to known AI API endpoints, distinguishing programmatic bulk data submission from interactive chat usage.",
+  "platform": "Microsoft Sentinel",
+  "detection_type": "Network",
+  "rule_language": "KQL",
+  "rule_query": "// Detect large payload uploads to AI API endpoints\n// Targets API endpoints specifically, not general web UI access\nlet aiApiEndpoints = dynamic([\n    'api.openai.com', 'api.anthropic.com', 'generativelanguage.googleapis.com',\n    'api.mistral.ai', 'api.deepseek.com', 'api.perplexity.ai', 'api.cohere.com',\n    'api.groq.com', 'api.together.xyz', 'api.fireworks.ai',\n    'api.x.ai', 'dashscope.aliyuncs.com'\n]);\nDeviceNetworkEvents\n| where Timestamp > ago(24h)\n| where ActionType == 'ConnectionSuccess'\n| extend Domain = tostring(parse_url(RemoteUrl).Host)\n| where Domain in (aiApiEndpoints)\n| where BytesSent > 500000  // > 500 KB per connection — well above typical prompt size\n| summarize TotalBytesSent = sum(BytesSent),\n            ConnectionCount = count(),\n            AvgPayloadKB = round(avg(BytesSent) / 1024.0, 1),\n            MaxPayloadKB = round(max(BytesSent) / 1024.0, 1),\n            TargetAPIs = make_set(Domain, 10),\n            FirstSeen = min(Timestamp),\n            LastSeen = max(Timestamp)\n          by InitiatingProcessAccountUpn, DeviceName\n| extend TotalMB = round(TotalBytesSent / 1048576.0, 2)\n| where TotalMB > 1  // total > 1 MB to API endpoints in 24h\n| project-reorder InitiatingProcessAccountUpn, DeviceName, TotalMB, ConnectionCount, AvgPayloadKB, MaxPayloadKB, TargetAPIs\n| order by TotalMB desc",
+  "rule_explanation": "Focuses specifically on AI API endpoints (api.openai.com, api.anthropic.com, etc.) rather than web UI domains, targeting programmatic usage. A typical interactive chat prompt is under 10 KB; payloads exceeding 500 KB per connection strongly suggest file uploads, bulk context injection, or automated data submission. The dual threshold (500 KB per connection AND 1 MB total per day) reduces noise while catching meaningful data egress. This detection is critical for identifying developers and power users who bypass web UI controls by accessing AI APIs directly via scripts, CLI tools, or custom integrations.",
+  "required_data_sources": [
+    "Microsoft Defender for Endpoint (DeviceNetworkEvents) with BytesSent enrichment"
+  ],
+  "prerequisites": [
+    "Microsoft 365 E5 or Defender for Endpoint P2",
+    "Sentinel workspace with M365D connector",
+    "BytesSent field populated in DeviceNetworkEvents (verify — this varies by deployment)",
+    "API endpoint list maintained and updated as new AI APIs launch"
+  ],
+  "expected_volume": "Very low — 1-5 users per day in a typical org. Developers using AI APIs for legitimate work will appear; triage based on data volume and content type rather than auto-blocking.",
+  "false_positive_guidance": "Developers in approved AI pilot programs who use APIs legitimately will trigger this rule. Data science teams uploading training datasets to AI APIs for fine-tuning are another common FP. Maintain an allow-list of approved API users and correlate with DLP findings (DET-MS-PV-001) for content-aware prioritization.",
+  "tuning_steps": [
+    "Verify BytesSent is populated in your environment before deploying.",
+    "Adjust per-connection threshold (default 500 KB) based on legitimate API usage patterns.",
+    "Adjust daily total threshold (default 1 MB) based on approved automation workloads.",
+    "Build an allow-list for approved API consumers (e.g., data science team service accounts).",
+    "Add new AI API domains as services launch — review quarterly."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity", "deepseek", "mistral-le-chat"],
+  "severity": "High",
+  "recommended_response": "RB-002",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7"],
+    "iso_iec_42001": ["8.3"],
+    "mitre_attack": ["T1041", "T1567"],
+    "nist_csf": ["DE.CM-1", "DE.CM-3"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020", "AI-CTRL-013"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-26",
+  "last_reviewed": "2026-05-26",
+  "references": []
+}

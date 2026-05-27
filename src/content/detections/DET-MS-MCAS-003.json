@@ -1,0 +1,46 @@
+{
+  "id": "DET-MS-MCAS-003",
+  "name": "Defender for Cloud Apps — AI application OAuth consent anomaly",
+  "description": "Detects unusual OAuth consent grants to AI-related applications, focusing on anomalous patterns such as first-time consent to high-permission AI apps, bulk consent across multiple users, or consent to unverified AI app publishers.",
+  "platform": "Defender for Cloud Apps",
+  "detection_type": "Application Connector",
+  "rule_language": "config",
+  "rule_query": "# Defender for Cloud Apps — OAuth App Anomaly Policy for AI Applications\n# Navigation: Defender for Cloud Apps > Policies > OAuth App Policy\n#\n# Policy: AI Application OAuth Consent Anomaly Detection\n#\n# Conditions (alert if ANY of these match):\n#   Condition group 1 — New high-privilege AI app consent:\n#     - App category: Generative AI, AI Code Generation, AI Productivity\n#     - Permission level: High privilege (Mail.ReadWrite, Files.ReadWrite.All,\n#       Sites.ReadWrite.All, User.ReadWrite.All, Directory.Read.All)\n#     - App first seen: within last 7 days (new app in the environment)\n#     - Publisher verification: Not verified\n#\n#   Condition group 2 — Rapid consent spread:\n#     - App category: Generative AI, AI Code Generation, AI Productivity\n#     - Users who granted consent: >= 10 in 24 hours\n#     - Indicates viral adoption of an unapproved AI tool\n#\n#   Condition group 3 — Admin consent to AI app:\n#     - App category: Generative AI, AI Code Generation, AI Productivity\n#     - Consent type: Admin consent (tenant-wide)\n#     - App NOT in sanctioned AI app list\n#     - Critical: admin consent grants access for ALL users\n#\n# Actions:\n#   - Alert: High severity\n#   - Governance action: Disable app (for admin-consent scenarios)\n#   - Governance action: Revoke permissions and notify user (for user-consent scenarios)\n#   - Notification: AI Governance team + Security Operations\n#   - Integration: create incident in Sentinel via MCAS connector\n#\n# Exceptions:\n#   - Sanctioned AI apps (maintained in MCAS app governance allow-list)\n#   - Apps with verified publisher AND explicit AI Governance approval",
+  "rule_explanation": "Extends DET-MS-MCAS-002 with anomaly-focused conditions that catch emerging threats. While DET-MS-MCAS-002 monitors steady-state OAuth grants, this rule targets anomalous patterns: new unverified AI apps appearing for the first time, viral consent spread indicating unauthorized AI tool adoption campaigns, and admin-consent grants that give AI apps tenant-wide access. Admin consent is particularly dangerous because a single grant exposes all users' data to the AI application. The governance actions (disable app, revoke permissions) provide automated containment.",
+  "required_data_sources": [
+    "Defender for Cloud Apps (MCAS) connected to Microsoft Entra ID",
+    "Microsoft Entra ID audit logs (OAuth consent events)",
+    "MCAS app governance feature enabled"
+  ],
+  "prerequisites": [
+    "Microsoft 365 E5 or Defender for Cloud Apps standalone",
+    "MCAS connected to Microsoft Entra ID with app governance enabled",
+    "Admin-consent workflow configured (users should not be able to admin-consent without approval)",
+    "Sanctioned AI app list maintained in MCAS"
+  ],
+  "expected_volume": "Very low — 0-3 anomaly alerts per week. Each alert is high-value and warrants immediate investigation. Admin-consent alerts should be treated as critical.",
+  "false_positive_guidance": "IT teams deploying sanctioned AI tools may trigger the rapid-consent-spread condition if they roll out to many users simultaneously. Add sanctioned apps to the exception list before rollout. Some AI apps use verified publishers but request excessive permissions — review permissions regardless of publisher verification status.",
+  "tuning_steps": [
+    "Maintain the sanctioned AI app exception list — update when new AI tools are approved.",
+    "Adjust the rapid-consent threshold (default 10 users in 24h) based on org size.",
+    "Configure admin-consent restriction policies in Entra ID to prevent unapproved tenant-wide grants.",
+    "Review MCAS app governance recommendations weekly for AI-categorized apps.",
+    "Integrate with Sentinel for cross-platform correlation of AI OAuth events with network-level detections."
+  ],
+  "detects_services": [],
+  "severity": "High",
+  "recommended_response": "RB-004",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-2.2"],
+    "iso_iec_42001": ["8.2", "8.4"],
+    "mitre_attack": ["T1550.001"],
+    "nist_csf": ["DE.CM-1", "DE.AE-1", "PR.AC-4"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-019", "AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-26",
+  "last_reviewed": "2026-05-26",
+  "references": [
+    { "title": "Defender for Cloud Apps — App governance", "url": "https://learn.microsoft.com/defender-cloud-apps/app-governance-manage-app-governance" }
+  ]
+}

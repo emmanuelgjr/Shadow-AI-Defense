@@ -1,0 +1,44 @@
+{
+  "id": "DET-ZS-001",
+  "name": "Zscaler — AI/ML application category monitoring",
+  "description": "Zscaler Internet Access (ZIA) URL filtering policy to monitor and optionally block access to the AI/ML application URL category, providing visibility into Shadow AI usage across the organization.",
+  "platform": "Zscaler",
+  "detection_type": "Network",
+  "rule_language": "config",
+  "rule_query": "# Zscaler Internet Access (ZIA) — URL Filtering Policy for AI/ML Category\n# Navigation: ZIA Admin Portal > Policy > URL & Cloud App Control\n#\n# Policy rule: Monitor AI/ML Application Category\n#\n# Rule order: Place BEFORE general allow rules, AFTER sanctioned AI allow rules\n#\n# Criteria:\n#   - URL Category: 'AI/ML Applications' (Zscaler-managed category)\n#   - Additional custom category (if needed): 'Shadow AI — Custom'\n#     populated from /watchlists/ConsumerLLMDomains.csv\n#   - Users: All users (exclude service accounts and break-glass)\n#   - Departments: All (or phased by department for rollout)\n#   - Locations: All\n#   - Time: Always\n#\n# Action: Caution (displays warning page, user can proceed — logged)\n#   Alternative actions:\n#   - Allow (monitor only — log all access silently)\n#   - Block (full enforcement — use after comms rollout)\n#\n# Logging:\n#   - Enable full logging for this rule\n#   - Log fields: user, department, URL, category, action, bytes uploaded/downloaded\n#   - Forward logs to SIEM via Nanolog Streaming Service (NSS)\n#\n# Companion rule (higher priority):\n#   - Name: Allow Sanctioned AI Services\n#   - URL category: custom 'Sanctioned AI' (Azure OpenAI, enterprise Copilot endpoints)\n#   - Action: Allow\n#   - Ensures sanctioned tools are not blocked by the monitoring rule below",
+  "rule_explanation": "Zscaler maintains a curated 'AI/ML Applications' URL category that is continuously updated as new AI services emerge. This policy leverages that category to log, caution, or block access to AI/ML applications. The 'Caution' action is recommended for initial deployment — it presents a warning page to the user (with AUP reference) while still logging the access, providing both visibility and gentle deterrence without hard-blocking productivity. Pair with NSS log streaming to a SIEM for correlation with other Shadow AI detections.",
+  "required_data_sources": [
+    "Zscaler Internet Access (ZIA) web logs",
+    "Zscaler Client Connector deployed on endpoints (or GRE/IPsec tunnel from network)"
+  ],
+  "prerequisites": [
+    "Zscaler Internet Access (ZIA) licensed — Business or Transformation edition",
+    "Zscaler Client Connector deployed to managed endpoints",
+    "SSL/TLS inspection enabled for AI/ML category URLs",
+    "Nanolog Streaming Service (NSS) configured for SIEM integration (optional but recommended)"
+  ],
+  "expected_volume": "Caution mode: 100-300 caution-page impressions per day per 10k users initially. Drops 60-70% within 2 weeks as users shift to sanctioned tools. Block mode: 30-80 block events per day at steady state.",
+  "false_positive_guidance": "Zscaler's AI/ML category may include enterprise-legitimate AI tools. Create an explicit allow rule for sanctioned AI services with higher priority. Occasionally, non-AI SaaS tools with AI features may be categorized under AI/ML — review the Zscaler URL lookup tool for miscategorizations and submit recategorization requests.",
+  "tuning_steps": [
+    "Start with Allow (log-only) for 1 week to baseline usage volume.",
+    "Move to Caution for 2 weeks — monitor user response and override rates.",
+    "Move to Block after communications rollout and sanctioned-tool availability confirmed.",
+    "Create custom category 'Sanctioned AI' for enterprise-approved AI services and place allow rule above this policy.",
+    "Review Zscaler category updates monthly — new AI services are added continuously."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity", "deepseek", "midjourney", "mistral-le-chat", "xai-grok"],
+  "severity": "Medium",
+  "recommended_response": "RB-001",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1"],
+    "iso_iec_42001": ["8.2"],
+    "nist_csf": ["DE.CM-1", "DE.CM-7"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-26",
+  "last_reviewed": "2026-05-26",
+  "references": [
+    { "title": "Zscaler URL Filtering Policies", "url": "https://help.zscaler.com/zia/url-filtering-policies" }
+  ]
+}

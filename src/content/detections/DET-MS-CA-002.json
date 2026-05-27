@@ -1,0 +1,48 @@
+{
+  "id": "DET-MS-CA-002",
+  "name": "Conditional Access — Block AI app OAuth grants for non-admin users",
+  "description": "Conditional Access policy combined with Entra ID consent settings that prevents non-admin users from granting OAuth consent to AI-related applications, centralizing AI app approval through the admin-consent workflow.",
+  "platform": "Conditional Access",
+  "detection_type": "Identity",
+  "rule_language": "config",
+  "rule_query": "# Microsoft Entra ID — Restrict OAuth Consent for AI Applications\n#\n# This control combines two configurations:\n#\n# Part 1: Entra ID Consent Settings\n# Navigation: Entra Admin Center > Identity > Applications > Consent and permissions\n#\n# User consent settings:\n#   - Option: 'Allow user consent for apps from verified publishers,\n#     for selected permissions' (recommended)\n#   - OR: 'Do not allow user consent' (strictest)\n#   - Classified permissions: only allow low-risk permissions\n#     (User.Read, openid, profile, email, offline_access)\n#   - All other permissions require admin approval\n#\n# Admin consent workflow:\n#   - Enable: Yes\n#   - Reviewers: AI Governance team + IT Security\n#   - Consent request expiry: 30 days\n#   - Email notifications: enabled for new requests\n#\n# Part 2: Conditional Access Policy (supplementary enforcement)\n# Navigation: Entra Admin Center > Protection > Conditional Access > New Policy\n#\n# Policy: Require Admin Consent for AI App Access\n#\n# Assignments:\n#   - Users: All users EXCEPT:\n#     - Global Administrators\n#     - Application Administrators\n#     - Cloud Application Administrators\n#     - AI Governance team members\n#     - Break-glass accounts\n#   - Target resources: Select apps\n#     - Condition: app registration filter where\n#       app displayName contains 'AI', 'GPT', 'Claude', 'Gemini', 'Copilot'\n#       OR app category in (Generative AI) via app governance tags\n#\n# Access controls:\n#   - Grant: Block access\n#   - Combined with admin-consent workflow: users see 'Request admin approval' instead of consent button\n#\n# Session controls:\n#   - Not applicable (access is blocked until admin approves)\n#\n# Monitoring:\n#   - Entra ID sign-in logs: filter for blocked consent attempts\n#   - Admin consent request queue: review weekly\n#   - Alert: email to AI Governance on each new admin-consent request for AI apps",
+  "rule_explanation": "Addresses the OAuth consent vector for Shadow AI. When employees discover a new AI tool, many will click 'Allow' on OAuth consent prompts without understanding the permissions being granted (e.g., Mail.ReadWrite, Files.ReadWrite.All). This grants the AI application persistent access to organizational data — a more serious risk than one-off copy-paste to a chat interface. By restricting user consent and routing AI app approvals through the admin-consent workflow, the organization gains a chokepoint for reviewing and approving AI applications before they access corporate data. The Conditional Access component adds defense-in-depth by blocking access to known AI apps that haven't been through the approval process.",
+  "required_data_sources": [
+    "Microsoft Entra ID P1 or higher",
+    "Entra ID audit logs (consent grant events)",
+    "Entra ID sign-in logs"
+  ],
+  "prerequisites": [
+    "Entra ID P1+ licensed",
+    "Admin-consent workflow enabled and reviewers assigned",
+    "AI Governance team identified and assigned as consent reviewers",
+    "Break-glass accounts created and excluded from the policy",
+    "User communications explaining the admin-consent requirement for AI apps"
+  ],
+  "expected_volume": "Admin-consent requests: 5-20 per week initially, stabilizing to 1-5/week as the approved AI app inventory matures. Blocked sign-in attempts: 10-30/day dropping to near zero after communications.",
+  "false_positive_guidance": "Some legitimate enterprise tools with AI features may be blocked by the display-name filter (apps with 'AI' in their name). Maintain an allow-list of pre-approved apps. Internal applications with AI-related names will also be blocked — ensure internal app registrations are excluded or pre-approved.",
+  "tuning_steps": [
+    "Start with the Entra ID consent settings (Part 1) — this is the primary control.",
+    "Add the Conditional Access policy (Part 2) in report-only mode for 2 weeks.",
+    "Build the pre-approved AI app list from the current MCAS app inventory.",
+    "Refine the app display-name filter to reduce FPs from non-AI apps with 'AI' in their name.",
+    "Establish an SLA for admin-consent review (recommended: 48 hours for standard, 4 hours for urgent).",
+    "Review denied consent requests monthly to identify unmet AI tool needs."
+  ],
+  "detects_services": [],
+  "severity": "Medium",
+  "recommended_response": "RB-004",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MANAGE-2.2"],
+    "iso_iec_42001": ["8.2", "8.4"],
+    "nist_csf": ["PR.AC-4", "PR.AC-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-019", "AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-26",
+  "last_reviewed": "2026-05-26",
+  "references": [
+    { "title": "Configure user consent in Microsoft Entra ID", "url": "https://learn.microsoft.com/entra/identity/enterprise-apps/configure-user-consent" },
+    { "title": "Configure admin consent workflow", "url": "https://learn.microsoft.com/entra/identity/enterprise-apps/configure-admin-consent-workflow" }
+  ]
+}

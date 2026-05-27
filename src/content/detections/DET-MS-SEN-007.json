@@ -1,0 +1,43 @@
+{
+  "id": "DET-MS-SEN-007",
+  "name": "Sentinel — After-hours AI service access",
+  "description": "Detects access to consumer AI services outside of defined business hours, which may indicate employees circumventing daytime monitoring controls or engaging in unauthorized data processing during off-peak periods.",
+  "platform": "Microsoft Sentinel",
+  "detection_type": "Network",
+  "rule_language": "KQL",
+  "rule_query": "// Detect AI service access outside business hours (configurable per timezone)\nlet llmDomains = _GetWatchlist('ConsumerLLMDomains') | project SearchKey;\nlet businessStart = 7;  // 7 AM local time\nlet businessEnd = 19;   // 7 PM local time\nlet workDays = dynamic(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']);\nDeviceNetworkEvents\n| where Timestamp > ago(24h)\n| where ActionType == 'ConnectionSuccess'\n| extend Domain = tostring(parse_url(RemoteUrl).Host)\n| where Domain in (llmDomains)\n| extend LocalHour = hourofday(Timestamp)  // adjust with datetime_utc_to_local() if timezone info available\n| extend DayOfWeek = dayofweek(Timestamp)\n| extend DayName = case(\n    DayOfWeek == 0d, 'Sunday',\n    DayOfWeek == 1d, 'Monday',\n    DayOfWeek == 2d, 'Tuesday',\n    DayOfWeek == 3d, 'Wednesday',\n    DayOfWeek == 4d, 'Thursday',\n    DayOfWeek == 5d, 'Friday',\n    DayOfWeek == 6d, 'Saturday',\n    'Unknown')\n| where LocalHour < businessStart or LocalHour >= businessEnd or DayName !in (workDays)\n| summarize AfterHoursConnections = count(),\n            DistinctDomains = dcount(Domain),\n            Domains = make_set(Domain, 10),\n            EarliestAccess = min(Timestamp),\n            LatestAccess = max(Timestamp),\n            Devices = make_set(DeviceName, 10)\n          by InitiatingProcessAccountUpn\n| where AfterHoursConnections > 3\n| project-reorder InitiatingProcessAccountUpn, AfterHoursConnections, DistinctDomains, Domains, EarliestAccess, LatestAccess",
+  "rule_explanation": "Identifies users accessing consumer AI services outside defined business hours (default: before 7 AM or after 7 PM, and weekends). After-hours AI usage is a behavioral indicator worth monitoring because: (1) it may indicate employees working with sensitive data when they believe they are less observed, (2) automated scripts or integrations running overnight against AI APIs, or (3) personal AI usage on corporate devices during off hours. The threshold of 3 connections filters out incidental access.",
+  "required_data_sources": [
+    "Microsoft Defender for Endpoint (DeviceNetworkEvents)",
+    "Sentinel watchlist: ConsumerLLMDomains"
+  ],
+  "prerequisites": [
+    "Microsoft 365 E5 or Defender for Endpoint P2",
+    "Sentinel workspace with M365D connector",
+    "Watchlist created from /watchlists/ConsumerLLMDomains.csv",
+    "Organization business hours defined (adjust businessStart/businessEnd in query)"
+  ],
+  "expected_volume": "Low to moderate — 5-25 users per day in a 10k-seat org. Higher in globally distributed organizations where timezone alignment is complex.",
+  "false_positive_guidance": "Global organizations with employees in multiple timezones will generate significant noise unless timezone logic is refined. Shift workers and on-call staff will legitimately access AI tools outside standard hours. Executives and senior staff often work extended hours. Consider building a per-user timezone mapping table for multi-timezone orgs.",
+  "tuning_steps": [
+    "Adjust businessStart and businessEnd to match organizational norms.",
+    "Build a timezone lookup table for global organizations (join on user location from Entra ID).",
+    "Exclude known shift-work departments or on-call groups.",
+    "Increase the AfterHoursConnections threshold if base volume is high.",
+    "Correlate with DET-MS-SEN-005 to prioritize after-hours access involving large data uploads."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity", "deepseek"],
+  "severity": "Medium",
+  "recommended_response": "RB-001",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7"],
+    "iso_iec_42001": ["8.2"],
+    "mitre_attack": ["T1029"],
+    "nist_csf": ["DE.CM-1", "DE.AE-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020", "AI-CTRL-008"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-26",
+  "last_reviewed": "2026-05-26",
+  "references": []
+}

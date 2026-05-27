@@ -1,0 +1,42 @@
+{
+  "id": "DET-MS-MDE-003",
+  "name": "Defender for Endpoint — AI desktop app installation detection",
+  "description": "Detects the installation of AI desktop applications on managed endpoints by monitoring Windows Installer events, MSI/EXE executions, and application registration in Add/Remove Programs.",
+  "platform": "Defender for Endpoint",
+  "detection_type": "Endpoint",
+  "rule_language": "KQL",
+  "rule_query": "// Detect installation of AI desktop applications on managed endpoints\n// Monitors installer processes, setup executables, and app registration events\nlet aiInstallerPatterns = dynamic([\n    'ChatGPTSetup', 'Claude-Setup', 'Claude_Setup', 'ClaudeSetup',\n    'CursorSetup', 'Cursor-Setup', 'cursor-setup',\n    'OtterSetup', 'Grammarly', 'GrammarlySetup',\n    'CopilotSetup', 'GitHub.Copilot',\n    'TabnineSetup', 'Codeium', 'CodeiumSetup',\n    'Pieces', 'PiecesSetup', 'WindsurfSetup'\n]);\nlet aiAppNames = dynamic([\n    'ChatGPT', 'Claude', 'Cursor', 'Otter', 'Grammarly Desktop',\n    'GitHub Copilot', 'Tabnine', 'Codeium', 'Pieces', 'Windsurf'\n]);\n// Track 1: Installer/setup process execution\nlet installerEvents = DeviceProcessEvents\n| where Timestamp > ago(7d)\n| where FileName has_any (aiInstallerPatterns)\n    or ProcessCommandLine has_any (aiInstallerPatterns)\n| project Timestamp, DeviceName, AccountUpn = InitiatingProcessAccountUpn,\n          DetectionMethod = 'Installer Execution',\n          Detail = strcat(FileName, ' | ', ProcessCommandLine);\n// Track 2: Registry-based installation detection (Add/Remove Programs)\nlet registryEvents = DeviceRegistryEvents\n| where Timestamp > ago(7d)\n| where ActionType == 'RegistryValueSet'\n| where RegistryKey has 'Uninstall'\n| where RegistryValueName == 'DisplayName'\n| where RegistryValueData has_any (aiAppNames)\n| project Timestamp, DeviceName, AccountUpn = InitiatingProcessAccountUpn,\n          DetectionMethod = 'Registry Installation',\n          Detail = strcat(RegistryKey, ' | ', RegistryValueData);\nunion installerEvents, registryEvents\n| summarize InstallEvents = count(), Methods = make_set(DetectionMethod),\n            FirstSeen = min(Timestamp), Details = make_set(Detail, 5)\n          by AccountUpn, DeviceName\n| project-reorder AccountUpn, DeviceName, InstallEvents, Methods, FirstSeen, Details",
+  "rule_explanation": "Uses a two-track detection approach: (1) monitors process execution events for known AI application installer names and setup executables, and (2) monitors Windows registry writes to the Uninstall key, which captures the moment an application registers itself in Add/Remove Programs. The dual approach catches both standard MSI/EXE installations and silent/scripted deployments. This detection runs over a 7-day window to catch installations that may have occurred during weekend or off-hours maintenance. Unlike DET-MS-MDE-002 (which detects runtime execution), this rule specifically targets the installation event, enabling earlier intervention.",
+  "required_data_sources": [
+    "Defender for Endpoint (DeviceProcessEvents)",
+    "Defender for Endpoint (DeviceRegistryEvents)"
+  ],
+  "prerequisites": [
+    "Microsoft 365 E5 or Defender for Endpoint P2",
+    "Sentinel workspace with M365D connector",
+    "DeviceRegistryEvents table populated (requires advanced hunting data collection)",
+    "Note: preventive control via Intune AppLocker/WDAC is preferred; this is the detective fallback"
+  ],
+  "expected_volume": "Low — 2-15 installation events per week in a typical 10k-seat org. Spikes may occur after a popular AI tool release or viral social media coverage.",
+  "false_positive_guidance": "IT-deployed sanctioned AI tools will trigger this rule during authorized deployments. Coordinate with IT deployment schedules or exclude SCCM/Intune service accounts from the query. Some AI tools auto-update via background installers that may re-trigger the detection.",
+  "tuning_steps": [
+    "Update aiInstallerPatterns and aiAppNames lists as new AI desktop clients are released.",
+    "Exclude IT deployment service accounts (SCCM, Intune) from installer execution tracking.",
+    "Add auto-update exclusions for sanctioned AI tools that trigger registry events on update.",
+    "Pair with Intune application control policies for preventive enforcement.",
+    "Correlate with DET-MS-MDE-002 to build a timeline: installation -> first execution -> sustained use."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "cursor", "otter-ai", "grammarly", "microsoft-copilot-consumer"],
+  "severity": "Medium",
+  "recommended_response": "RB-004",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7"],
+    "iso_iec_42001": ["8.2"],
+    "nist_csf": ["DE.CM-7", "PR.IP-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-26",
+  "last_reviewed": "2026-05-26",
+  "references": []
+}

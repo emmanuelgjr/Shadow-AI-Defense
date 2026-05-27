@@ -1,0 +1,47 @@
+{
+  "id": "DET-NS-002",
+  "name": "Netskope — Real-time DLP for AI service uploads",
+  "description": "Data Loss Prevention policy in Netskope that inspects content uploaded to AI services in real time, detecting and blocking sensitive data exfiltration through generative AI platforms.",
+  "platform": "Netskope",
+  "detection_type": "DLP",
+  "rule_language": "config",
+  "rule_query": "# Netskope — Real-time DLP policy for AI service uploads\n# Navigation: Policies > Real-time Protection > New Policy\n#\n# Policy: AI Service DLP — Block Sensitive Uploads\n#\n# Source:\n#   - Users: All users (exclude break-glass / service accounts)\n#   - User groups: All (or phased rollout by department)\n#\n# Destination:\n#   - Application tag: 'Generative AI', 'AI/ML', 'AI Code Assistant'\n#   - App instance: 'Unsanctioned' OR 'Monitored'\n#   - Specific apps (if not using tags): ChatGPT, Claude, Gemini, Perplexity, DeepSeek\n#\n# Activity:\n#   - Upload, Post, Send, Share, Create\n#\n# DLP Profile (Settings > DLP > Profiles):\n#   - Profile name: AI-Upload-Sensitive-Content\n#   - Rules (match any):\n#     - PII: SSN, credit card, passport, national ID, email + phone combo\n#     - PHI: medical record numbers, ICD/CPT codes, HIPAA identifiers\n#     - Financial: IBAN, SWIFT, bank account patterns\n#     - Source code: code file extensions (.py, .js, .java, .cs, .go, .rs, .sql)\n#     - Proprietary: custom regex for internal project codenames, customer IDs\n#     - Classification labels: files tagged Confidential, Highly Confidential, Restricted\n#   - Severity: Critical for PII/PHI, High for source code, Medium for proprietary\n#\n# Actions:\n#   - Block with user notification (justification required for override)\n#   - Alert: High severity\n#   - Incident: create in Netskope Incident Management\n#   - Notification: email to AI Governance team\n#   - Log: full activity detail in SkopeIT\n#\n# Exceptions:\n#   - Sanctioned enterprise AI instances (e.g., Azure OpenAI with corporate tenant)\n#   - Users in approved AI pilot program (sync group from IdP)",
+  "rule_explanation": "Netskope's inline DLP engine inspects content in real time as it passes through the Netskope proxy. This policy targets uploads, posts, and shares to AI-tagged applications, applying a comprehensive DLP profile that checks for PII, PHI, financial data, source code, and proprietary content. Unlike endpoint-only DLP, Netskope inspects traffic regardless of the browser used, covering scenarios that endpoint DLP may miss (e.g., API-based uploads, non-Edge browsers without extensions). The block-with-justification model balances security with productivity.",
+  "required_data_sources": [
+    "Netskope Intelligent SSE with DLP add-on",
+    "Netskope Client deployed for inline inspection",
+    "SSL/TLS inspection enabled for AI service domains"
+  ],
+  "prerequisites": [
+    "Netskope Intelligent SSE with Advanced DLP licensed",
+    "SSL/TLS decryption enabled and CA certificate deployed to endpoints",
+    "Netskope Client deployed and steering configured for web traffic",
+    "DLP profiles configured with organization-specific sensitive info patterns",
+    "AI application tags populated in the CCI catalog (see DET-NS-001)"
+  ],
+  "expected_volume": "After initial tuning: 10-50 DLP incidents per day per 10k users. Expect higher initial volumes during the first 2 weeks before user awareness improves.",
+  "false_positive_guidance": "Common FP sources: (1) sample data in training documents containing realistic-looking PII patterns, (2) code snippets in documentation that match source-code rules, (3) public datasets containing synthetic PII. Tune DLP fingerprinting thresholds and add exact-match exceptions for known benign patterns.",
+  "tuning_steps": [
+    "Deploy in alert-only mode for 2 weeks to baseline DLP match volume and FP rate.",
+    "Refine DLP profile rules based on FP analysis — adjust confidence thresholds and minimum match counts.",
+    "Enable block-with-override after tuning; review override justifications weekly.",
+    "Escalate to block-without-override for highest-severity SITs (PII, PHI) after 30 days of stable operation.",
+    "Exclude sanctioned enterprise AI instances from the block policy."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity", "deepseek", "mistral-le-chat", "qwen"],
+  "severity": "High",
+  "recommended_response": "RB-002",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1", "MEASURE-2.7", "MANAGE-2.2"],
+    "iso_iec_42001": ["8.2", "8.3", "8.4"],
+    "mitre_attack": ["T1567.002"],
+    "nist_csf": ["DE.CM-3", "PR.DS-5"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020", "AI-CTRL-013"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-26",
+  "last_reviewed": "2026-05-26",
+  "references": [
+    { "title": "Netskope Advanced DLP", "url": "https://www.netskope.com/products/data-loss-prevention" }
+  ]
+}

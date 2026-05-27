@@ -1,0 +1,45 @@
+{
+  "id": "DET-NS-003",
+  "name": "Netskope — Inline CASB block of unsanctioned AI domains",
+  "description": "Inline enforcement policy using Netskope's CASB to block access to unsanctioned AI service domains, preventing Shadow AI usage at the network layer.",
+  "platform": "Netskope",
+  "detection_type": "Network",
+  "rule_language": "config",
+  "rule_query": "# Netskope — Inline CASB block policy for unsanctioned AI domains\n# Navigation: Policies > Real-time Protection > New Policy\n#\n# Policy: Block Unsanctioned AI Services\n#\n# Source:\n#   - Users: All users (exclude break-glass accounts)\n#   - User groups: All (phased rollout recommended)\n#   - Source location: Any\n#\n# Destination:\n#   - Application tag: 'Generative AI', 'AI/ML', 'AI Code Assistant'\n#   - App instance: 'Unsanctioned'\n#   - Custom URL list (supplement): import from /watchlists/ConsumerLLMDomains.csv\n#     Domains: chat.openai.com, chatgpt.com, claude.ai, gemini.google.com,\n#              perplexity.ai, deepseek.com, poe.com, character.ai,\n#              huggingface.co/chat, app.suno.ai, midjourney.com\n#\n# Activity:\n#   - Any (Access, Upload, Download, Post)\n#\n# Action:\n#   - Block\n#   - User notification: custom block page with link to approved AI tools portal\n#     and Acceptable Use Policy reference\n#   - Alert: Medium severity\n#   - Log: full activity detail in SkopeIT\n#\n# Exceptions (separate allow policy with higher priority):\n#   - Sanctioned enterprise AI instances (Azure OpenAI, enterprise Claude, etc.)\n#   - Users in approved AI pilot group (synced from Entra ID / Okta)\n#   - Specific app instances tagged 'Sanctioned' in Netskope\n#\n# SSL/TLS inspection:\n#   - Required for full domain visibility on HTTPS traffic\n#   - Ensure AI service domains are NOT in the SSL bypass list",
+  "rule_explanation": "Netskope's inline CASB operates as a forward proxy, intercepting all web traffic from managed endpoints. This policy blocks access to AI applications classified as unsanctioned in the Netskope CCI catalog. The block applies to all activities (browsing, uploading, API calls) and presents a custom block page directing users to approved enterprise AI tools. Unlike DNS-only blocking, inline CASB enforcement works even when users attempt to use alternative DNS resolvers or VPNs, because the Netskope Client intercepts traffic at the endpoint level before it leaves the device.",
+  "required_data_sources": [
+    "Netskope Intelligent SSE (inline proxy mode)",
+    "Netskope Client deployed on managed endpoints"
+  ],
+  "prerequisites": [
+    "Netskope Intelligent SSE licensed (CASB + SWG)",
+    "Netskope Client deployed with steering to proxy all web traffic",
+    "SSL/TLS inspection enabled with CA certificate deployed to endpoints",
+    "AI applications classified as Sanctioned/Unsanctioned in Netskope (see DET-NS-001)",
+    "Custom block page configured with approved-tools link and AUP reference"
+  ],
+  "expected_volume": "Day 1 spike: expect 200-500 block events per 10k users. Drops to 20-50/day within 2 weeks after user communications. Residual baseline of 5-15/day from new employees and habitual users.",
+  "false_positive_guidance": "Over-blocking risk: (1) Netskope may categorize non-AI productivity tools with minor AI features under the Generative AI tag — review before enforcement. (2) Some sanctioned enterprise AI tools may share domains with consumer versions (e.g., copilot.microsoft.com) — use app instance differentiation. (3) Legitimate research or competitive-intelligence use may be blocked — provide an exception-request workflow.",
+  "tuning_steps": [
+    "Deploy in alert-only mode for 1-2 weeks to identify legitimate use cases.",
+    "Differentiate sanctioned vs. unsanctioned instances for apps with both tiers (e.g., ChatGPT consumer vs. ChatGPT Enterprise).",
+    "Create a user-facing exception-request form linked from the block page.",
+    "Review blocked-access logs weekly to catch new AI services not yet in the CCI catalog.",
+    "Update custom URL list monthly from the published watchlist."
+  ],
+  "detects_services": ["openai-chatgpt", "anthropic-claude", "google-gemini", "perplexity", "deepseek", "midjourney", "mistral-le-chat", "xai-grok", "qwen"],
+  "severity": "Medium",
+  "recommended_response": "RB-001",
+  "framework_mappings": {
+    "nist_ai_rmf": ["GOVERN-4.1"],
+    "iso_iec_42001": ["8.2"],
+    "nist_csf": ["PR.AC-3", "DE.CM-1"]
+  },
+  "ai_controls_catalog_refs": ["AI-CTRL-020"],
+  "author": "Emmanuel Guilherme Jr.",
+  "created": "2026-05-26",
+  "last_reviewed": "2026-05-26",
+  "references": [
+    { "title": "Netskope Inline CASB", "url": "https://www.netskope.com/products/casb" }
+  ]
+}
