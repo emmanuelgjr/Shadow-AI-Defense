@@ -1,0 +1,17 @@
+{
+  "name": "Shadow AI Defense",
+  "short_name": "Shadow AI",
+  "description": "Detect and respond to shadow AI in your enterprise. 35 service profiles, 30 detection rules, 8 response runbooks.",
+  "id": "/Shadow-AI-Defense/",
+  "start_url": "/Shadow-AI-Defense/",
+  "scope": "/Shadow-AI-Defense/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#B45309",
+  "icons": [
+    { "src": "/Shadow-AI-Defense/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/Shadow-AI-Defense/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/Shadow-AI-Defense/icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/Shadow-AI-Defense/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
