@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://shadowaidefense.dev/sitemap-index.xml
+Sitemap: https://emmanuelgjr.github.io/Shadow-AI-Defense/sitemap-index.xml
