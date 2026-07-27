@@ -1,6 +1,6 @@
 {
   "name": "shadow-ai-defense",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Detect and respond to Shadow AI in your enterprise.",
   "type": "module",
   "private": true,

@@ -2,26 +2,27 @@
 
 > Detect and respond to Shadow AI in your enterprise.
 
-[![Site](https://img.shields.io/badge/site-shadowaidefense.dev-B45309)](https://shadowaidefense.dev)
+[![Site](https://img.shields.io/badge/site-live-B45309)](https://emmanuelgjr.github.io/Shadow-AI-Defense/)
 [![License: MIT + CC-BY 4.0](https://img.shields.io/badge/license-MIT%20%2B%20CC--BY%204.0-B45309)](LICENSE)
-[![Detection rules](https://img.shields.io/badge/detection%20rules-16-B45309)](https://shadowaidefense.dev/detections)
-[![Stacks supported](https://img.shields.io/badge/stacks-4-B45309)](https://shadowaidefense.dev/stack)
+[![Detection rules](https://img.shields.io/badge/detection%20rules-30-B45309)](https://emmanuelgjr.github.io/Shadow-AI-Defense/detections/)
+[![Stacks supported](https://img.shields.io/badge/stacks-8-B45309)](https://emmanuelgjr.github.io/Shadow-AI-Defense/stack/)
 
 The detection rule library, response runbooks, employee comms, and policy
 starter for the #1 AI risk on every CISO's desk in 2026.
 
-[**Pick your stack →**](https://shadowaidefense.dev/stack)
+[**Pick your stack →**](https://emmanuelgjr.github.io/Shadow-AI-Defense/stack/)
 
-## What's inside (v0.1)
+## What's inside (v0.2)
 
-- 🔍 **20 AI services** cataloged with network and client signatures
-- 🛡️ **16 detection rules** — Microsoft Sentinel KQL, Defender for Cloud
-  Apps, Purview DLP, Defender for Endpoint, CrowdStrike Falcon, generic
-  network, Conditional Access
-- 🚨 **4 graduated response runbooks** with decision trees, RACI, comms templates
+- 🔍 **35 AI services** cataloged with network and client signatures
+- 🛡️ **30 detection rules** — Microsoft Sentinel KQL, Defender for Cloud
+  Apps, Purview DLP, Defender for Endpoint, CrowdStrike Falcon, Netskope,
+  Zscaler, generic network, Conditional Access
+- 🚨 **8 graduated response runbooks** with decision trees, RACI, comms templates
 - 📋 **Shadow AI policy starter** under CC-BY 4.0
-- ✉️ **10 comms templates** referenced (5 with downloadable stubs in v0.1)
-- 🎯 **4 stack profiles** — pick yours, see only what works
+- ✉️ **10 comms templates** listed — 5 available as Word downloads, 5 still
+  being drafted
+- 🎯 **8 stack profiles** — pick yours, see only what works
 - 🗺️ **Compliance crosswalk** — NIST AI RMF, ISO 42001, EU AI Act, NIST CSF, OSFI B-13, NYDFS Part 500
 
 ## Why this exists
@@ -68,7 +69,7 @@ false-positive rates.
 ## Use it. Cite it.
 
 ```
-Guilherme Jr., E. (2026). Shadow AI Defense (Version 0.1.0). https://shadowaidefense.dev
+Guilherme Jr., E. (2026). Shadow AI Defense (Version 0.2.0). https://emmanuelgjr.github.io/Shadow-AI-Defense/
 ```
 
 ## Licensing
