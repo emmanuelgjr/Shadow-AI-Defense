@@ -8,5 +8,6 @@ export default defineConfig({
   output: 'static',
   integrations: [react(), sitemap()],
   markdown: { shikiConfig: { theme: 'github-dark-dimmed' } },
+  compressHTML: true,
   build: { inlineStylesheets: 'auto' },
 });
