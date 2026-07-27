@@ -2,23 +2,27 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 const base = import.meta.env.BASE_URL;
 
+// `available` must match the .docx files emitted by scripts/generate-comms.ts.
+// Listing a template without its file produces a 404 on the live site.
 const comms = [
-  { id: 'comms-all-employee-announcement', name: 'All-employee announcement: AI program launch', tag: 'v0.1' },
-  { id: 'comms-all-employee-education', name: 'All-employee education: Responsible AI tool use', tag: 'v0.1' },
-  { id: 'comms-manager-talking-points', name: 'Manager talking points', tag: 'v0.1' },
-  { id: 'comms-individual-warning-first', name: 'Individual warning: first occurrence', tag: 'v0.1' },
-  { id: 'comms-approved-tool-announcement', name: 'Approved-tool launch announcement', tag: 'v0.1' },
-  { id: 'comms-individual-warning-repeat', name: 'Individual warning: repeat occurrence', tag: 'v0.1' },
-  { id: 'comms-department-level-briefing', name: 'Department-level briefing (suspected widespread use)', tag: 'v0.1' },
-  { id: 'comms-approved-pilot-announcement', name: 'Approved-pilot announcement', tag: 'v0.1' },
-  { id: 'comms-incident-notification-sensitive-data-egress', name: 'Incident notification: sensitive data egress', tag: 'v0.1' },
-  { id: 'comms-quarterly-program-update', name: 'Quarterly Shadow AI program update (risk committee)', tag: 'v0.1' },
+  { id: 'comms-all-employee-announcement', name: 'All-employee announcement: AI program launch', available: false },
+  { id: 'comms-all-employee-education', name: 'All-employee education: Responsible AI tool use', available: false },
+  { id: 'comms-manager-talking-points', name: 'Manager talking points', available: false },
+  { id: 'comms-individual-warning-first', name: 'Individual warning: first occurrence', available: false },
+  { id: 'comms-approved-tool-announcement', name: 'Approved-tool launch announcement', available: false },
+  { id: 'comms-individual-warning-repeat', name: 'Individual warning: repeat occurrence', available: true },
+  { id: 'comms-department-level-briefing', name: 'Department-level briefing (suspected widespread use)', available: true },
+  { id: 'comms-approved-pilot-announcement', name: 'Approved-pilot announcement', available: true },
+  { id: 'comms-incident-notification-sensitive-data-egress', name: 'Incident notification: sensitive data egress', available: true },
+  { id: 'comms-quarterly-program-update', name: 'Quarterly Shadow AI program update (risk committee)', available: true },
 ];
+
+const availableCount = comms.filter((c) => c.available).length;
 ---
 
 <BaseLayout
   title="Employee Communications Templates — Shadow AI Defense"
-  description="10 templates for Shadow AI program communications: announcement, education, manager talking points, warnings, incident notifications."
+  description="Word templates for Shadow AI program communications: warnings, department briefings, pilot announcements, incident notifications, risk-committee updates."
 >
   <section class="max-w-content mx-auto px-6 lg:px-8 py-12">
     <p class="text-sm font-medium text-accent-700">Comms</p>
@@ -35,17 +39,18 @@ const comms = [
             <h2 class="text-base font-semibold text-ink-900">{c.name}</h2>
             <p class="text-xs text-ink-500 mt-0.5 font-mono">{c.id}</p>
           </div>
-          {c.tag === 'v0.1' ? (
+          {c.available ? (
             <a href={`${base}templates/${c.id}.docx`} download class="btn btn-primary btn-sm">Download</a>
           ) : (
-            <span class="badge-neutral">ships {c.tag}</span>
+            <span class="badge-neutral whitespace-nowrap">In drafting</span>
           )}
         </li>
       ))}
     </ul>
 
     <p class="mt-12 text-sm text-ink-500">
-      All ten templates are available as Word .docx downloads.
+      {availableCount} of {comms.length} templates are available as Word .docx downloads;
+      the rest are still being written and will appear here once they pass review.
       Adapt with attribution (CC-BY 4.0).
     </p>
   </section>
