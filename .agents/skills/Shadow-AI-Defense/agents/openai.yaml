@@ -1,0 +1,6 @@
+interface:
+  display_name: "Shadow AI Defense"
+  short_description: "Repo-specific patterns and workflows for Shadow-AI-Defense"
+  default_prompt: "Use the Shadow-AI-Defense repo skill to follow existing architecture, testing, and workflow conventions."
+policy:
+  allow_implicit_invocation: true
