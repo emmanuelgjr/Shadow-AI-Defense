@@ -1,27 +1,37 @@
 # Roadmap
 
-## v0.1 (current)
+## v0.2 (current)
 
-- 20 of 35 AI services
-- 16 detection rules across Microsoft Sentinel, Defender for Cloud Apps,
-  Purview DLP, Defender for Endpoint, CrowdStrike Falcon, generic network,
-  Conditional Access
-- 4 of 8 runbooks
-- 4 of 8 stack profiles (Microsoft E5, Microsoft E3 + add-ons, Microsoft
-  minimal, CrowdStrike + Netskope)
+Shipped in v0.1:
+
 - Policy starter (inline on /policy)
-- 5 of 10 comms templates referenced
 - 2 watchlists (ConsumerLLMDomains, AIBrowserExtensions)
 - Compliance crosswalk
 - About / Methodology / Contribute / DETECTION_QUALITY
 
-## v0.2
+Content targets met in v0.2:
 
-- Remaining 15 services, 14 detection rules, 4 runbooks, 4 stacks, 5 comms
-- Exception wizard (interactive, localStorage-backed)
-- Maturity self-assessment (Shadow AI program scope)
-- Cross-link: every detection → AI-CTRL-020 + related; policy starter ties
-  to charter; exceptions feed risk register
+- 35 AI services (was 20)
+- 30 detection rules (was 16) across Microsoft Sentinel, Defender for Cloud
+  Apps, Purview DLP, Defender for Endpoint, CrowdStrike Falcon, Netskope,
+  Zscaler, generic network, Conditional Access
+- 8 response runbooks (was 4)
+- 8 stack profiles (was 4)
+- Cross-link: all 30 detections reference AI-CTRL-020 and related controls
+
+Still open from v0.2:
+
+- **Comms templates — 5 of 10.** The five written are the escalation-side
+  templates (repeat warning, department briefing, pilot announcement,
+  incident notification, quarterly update). The five originally listed
+  first — all-employee announcement, all-employee education, manager
+  talking points, first-occurrence warning, approved-tool launch — are not
+  written. `/comms` shows these as "In drafting" rather than linking them.
+  To finish one: add it to `scripts/generate-comms.ts`, regenerate, and
+  flip its `available` flag in `src/pages/comms.astro`
+  (`tests/comms-templates.test.ts` enforces that the two stay in step).
+- Exception wizard (interactive, localStorage-backed) — not started
+- Maturity self-assessment, Shadow AI program scope — not started
 
 ## v0.3
 
